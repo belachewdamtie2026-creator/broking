@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 import io
 
-st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
+st.set_page_config(page_title="ፈጣን ድለላ", layout="wide")
 
 # የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
