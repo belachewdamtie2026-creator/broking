@@ -6,10 +6,9 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# የጎን ምናሌውን ቀስት ወደ 3 አግዳሚ መስመር ለመቀየር እና ውበት ለመጨመር የተደረገ የ CSS ማሻሻያ
+# የጎን ምናሌውን ቀስት ወደ 3 አግዳሚ መስመር ለመቀየር የተደረገ የ CSS ማሻሻያ (ስህተቱ እዚህ ጋር ተስተካክሏል)
 st.markdown("""
     <style>
-        /* የቀስት ምልክቱን በ 3 አግዳሚ መስመር (Hamburger Icon) መተካት */
         [data-testid="stSidebarCollapseButton"] button::before {
             content: "☰" !important;
             font-size: 24px !important;
@@ -20,9 +19,9 @@ st.markdown("""
             display: none !important;
         }
     </style>
-""", unsafe_with_html=True)
+""", unsafe_allow_html=True)
 
-# የዳታቤዝ መጀመሪያ ዝግጅት (የደሞዝ አምድ 'salary' ተጨምሯል)
+# የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -33,7 +32,7 @@ def init_db():
             phone TEXT NOT NULL,
             job_type TEXT NOT NULL,
             experience TEXT,
-            salary INTEGER DEFAULT 0,
+            salary INTEGER DEFAULT 3000,
             photo BLOB
         )
     ''')
@@ -47,6 +46,13 @@ def init_db():
             status TEXT DEFAULT 'አዲስ ጥያቄ'
         )
     ''')
+    
+    # የደሞዝ (salary) አምድ በድሮው ዳታቤዝ ላይ ከሌለ በራሱ እንዲጨምረው ማድረግ (KeyErrorን ለመከላከል)
+    try:
+        cursor.execute("ALTER TABLE applicants ADD COLUMN salary INTEGER DEFAULT 3000")
+    except sqlite3.OperationalError:
+        pass # አምዱ አስቀድሞ ካለ ምንም አያደርግም
+        
     conn.commit()
     conn.close()
 
@@ -123,7 +129,6 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     df = load_data()
     
     if not df.empty:
-        # ማጣሪያዎች ጎን ለጎን
         filter_col1, filter_col2 = st.columns(2)
         with filter_col1:
             job_filter = st.selectbox("የሚፈልጉትን የስራ አይነት ይምረጡ:", ["ሁሉም"] + list(df["job_type"].unique()))
@@ -133,7 +138,6 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                                    max_value=int(df["salary"].max() + 1000), 
                                    value=int(df["salary"].max() + 1000))
         
-        # ዳታውን በስራ አይነት እና በደሞዝ ማጣራት
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         filtered_df = filtered_df[filtered_df["salary"] <= max_salary]
         
