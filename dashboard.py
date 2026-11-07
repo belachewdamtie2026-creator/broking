@@ -6,21 +6,6 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# የጎን ምናሌውን ቀስት ወደ 3 አግዳሚ መስመር ለመቀየር የተደረገ የ CSS ማሻሻያ (ስህተቱ እዚህ ጋር ተስተካክሏል)
-st.markdown("""
-    <style>
-        [data-testid="stSidebarCollapseButton"] button::before {
-            content: "☰" !important;
-            font-size: 24px !important;
-            font-weight: bold !important;
-            color: #333 !important;
-        }
-        [data-testid="stSidebarCollapseButton"] svg {
-            display: none !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 # የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
     conn = sqlite3.connect('database.db', check_same_thread=False)
@@ -47,11 +32,10 @@ def init_db():
         )
     ''')
     
-    # የደሞዝ (salary) አምድ በድሮው ዳታቤዝ ላይ ከሌለ በራሱ እንዲጨምረው ማድረግ (KeyErrorን ለመከላከል)
     try:
         cursor.execute("ALTER TABLE applicants ADD COLUMN salary INTEGER DEFAULT 3000")
     except sqlite3.OperationalError:
-        pass # አምዱ አስቀድሞ ካለ ምንም አያደርግም
+        pass
         
     conn.commit()
     conn.close()
@@ -84,16 +68,16 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# የጎን ምናሌ (Menu)
-page = st.sidebar.radio("ምናሌ (Menu)", [
+# 🚀 ዋና ማሻሻያ፦ የጎን ምናሌው ጠፍቶ ከላይ በታብ (Tabs) መልክ እንዲመጣ ተደርጓል
+st.title("🌟 ዲጂታል ድለላ")
+main_tab1, main_tab2, main_tab3 = st.tabs([
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
     "📊 Admin Only"
 ])
 
 # ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
-if page == "📝 የሰራተኛ መመዝገቢያ":
-    st.title("የሰራተኛ መመዝገቢያ")
+with main_tab1:
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     st.markdown("---")
     
@@ -121,8 +105,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
                 st.error("እባክዎ ሁሉንም በትክክል ያስገቡ!")
 
 # ----- ገፅ 2፦ ዝግጁ የሆኑ ሰራተኞች ዝርዝር -----
-elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
-    st.title("ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
+with main_tab2:
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     st.markdown("---")
     
@@ -183,11 +166,11 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
 # ----- ገፅ 3፦ Admin Only -----
-elif page == "📊 Admin Only":
-    st.title("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+with main_tab3:
+    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
     
-    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password")
+    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_input")
     
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
@@ -211,7 +194,7 @@ elif page == "📊 Admin Only":
                         st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']} | 💰 **ደሞዝ:** {row['salary']} ብር")
                         
                     with admin_col3:
-                        if st.button(f"❌ ሰራተኛውን አጥፋ", key=f"del_{row['id']}"):
+                        if st.button(f"❌ አጥፋ", key=f"del_{row['id']}"):
                             delete_applicant(row['id'])
                             st.success(f"ሰራተኛ ቁጥር BDR-{row['id']} ከዝርዝር ጠፍቷል!")
                             st.rerun()
