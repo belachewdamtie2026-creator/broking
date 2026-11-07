@@ -170,7 +170,7 @@ with main_tab3:
     st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
     
-    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
+    password = st.text_input("Password ያስገቡ፦", type="password", key="admin_password_direct")
     
     if password == "bdr123":
         admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
