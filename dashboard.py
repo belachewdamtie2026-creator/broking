@@ -54,15 +54,15 @@ def update_order_status(order_id, new_status):
     conn.commit()
     conn.close()
 
-# የጎን ምናሌ (Menu)
+# የጎን ምናሌ (Menu) - እዚህ ጋር ያሉት ስሞች ከታች ካሉት ጋር በትክክል ተገጣጥመዋል
 page = st.sidebar.radio("ምናሌ (Menu)", [
-    "📝 የሰራተኛ መመዝገቢያ ቅፅ", 
-    "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)", 
-    "📊 የአስተዳዳሪ ሰሌዳ (Admin Only)"
+    "📝 የሰራተኛ መመዝገቢያ", 
+    "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
+    "📊 Admin Only"
 ])
 
-# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ ቅፅ -----
-if page == "📝 መመዝገቢያ ቅፅ":
+# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
+if page == "📝 የሰራተኛ መመዝገቢያ":
     st.title("የሰራተኛ መመዝገቢያ")
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     st.markdown("---")
@@ -89,8 +89,8 @@ if page == "📝 መመዝገቢያ ቅፅ":
             else:
                 st.error("እባክዎ ሁሉንም በትክክል ያስገቡ!")
 
-# ----- ገፅ 2፦ የሰራተኞች ማሳያ (ለቀጣሪዎች) -----
-elif page == "🏨 የሰራተኛ ፈላጊዎች ገጽ":
+# ----- ገፅ 2፦ ዝግጁ የሆኑ ሰራተኞች ዝርዝር -----
+elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.title("ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     st.markdown("---")
@@ -102,7 +102,7 @@ elif page == "🏨 የሰራተኛ ፈላጊዎች ገጽ":
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         
         for index, row in filtered_df.iterrows():
-            col1, col2 = st.columns(2) # እዚህ ጋር ቁጥር 2 ተጨምሯል
+            col1, col2 = st.columns(2)
             
             with col1:
                 if row['photo']:
@@ -141,7 +141,7 @@ elif page == "🏨 የሰራተኛ ፈላጊዎች ገጽ":
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
-# ----- ገፅ 3፦ የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ (Admin) -----
+# ----- ገፅ 3፦ Admin Only -----
 elif page == "📊 Admin Only":
     st.title("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
