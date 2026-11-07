@@ -54,6 +54,14 @@ def update_order_status(order_id, new_status):
     conn.commit()
     conn.close()
 
+# ሰራተኛን ከዳታቤዝ ሙሉ በሙሉ ለማጥፋት የተጨመረ አዲስ ፈንክሽን
+def delete_applicant(applicant_id):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM applicants WHERE id = ?', (applicant_id,))
+    conn.commit()
+    conn.close()
+
 # የጎን ምናሌ (Menu)
 page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ", 
@@ -61,7 +69,7 @@ page = st.sidebar.radio("ምናሌ (Menu)", [
     "📊 Admin Only"
 ])
 
-# ----- ጌፅ 1፦ የሰራተኛ መመዝገቢያ -----
+# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.title("የሰራተኛ መመዝገቢያ")
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
@@ -155,18 +163,27 @@ elif page == "📊 Admin Only":
             st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
             df = load_data()
             if not df.empty:
-                # ፎቶዎችን ለእያንዳንዱ ሰራተኛ በተናጠል ማሳያ አሰራር
                 for index, row in df.iterrows():
-                    admin_col1, admin_col2 = st.columns([1, 4])
+                    admin_col1, admin_col2, admin_col3 = st.columns([1, 3, 1.5]) # የማጥፊያ ቁልፍ ለማስቀመጫ 3ኛ ኮለምን ተጨምሯል
+                    
                     with admin_col1:
                         if row['photo']:
                             img = Image.open(io.BytesIO(row['photo']))
                             st.image(img, width=80)
                         else:
                             st.write("❌ ፎቶ የለም")
+                            
                     with admin_col2:
                         st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}")
                         st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']}")
+                        
+                    with admin_col3:
+                        # በእያንዳንዱ ሰራተኛ መስመር ላይ የሚመጣ የማጥፊያ በተን
+                        if st.button(f"❌ ሰራተኛውን አጥፋ", key=f"del_{row['id']}"):
+                            delete_applicant(row['id'])
+                            st.success(f"ሰራተኛ ቁጥር BDR-{row['id']} ከዝርዝር ጠፍቷል!")
+                            st.rerun() # ገጹን በቅጽበት ለማደስ
+                            
                     st.markdown("---")
             else:
                 st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
