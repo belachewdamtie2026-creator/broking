@@ -68,7 +68,7 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# 🚀 አዲሱ እና ቀላል አቀማመጥ፦ ሁሉም ገጾች ከላይ በታብ (Tabs) ሆነዋል፣ የጎን ምናሌ ጠፍቷል
+# የዌብሳይቱ ዋና ርዕስ እና ታቦች
 st.title("🌟 የባህር ዳር ዲጂታል ድለላ")
 main_tab1, main_tab2, main_tab3 = st.tabs([
     "📝 የሰራተኛ መመዝገቢያ", 
@@ -165,7 +165,7 @@ with main_tab2:
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
-# ----- ገፅ 3፦ Admin Only (አሁን በተጠቃሚው ታብ ምርጫ ብቻ ይሰራል) -----
+# ----- ገፅ 3፦ Admin Only -----
 with main_tab3:
     st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
@@ -220,5 +220,3 @@ with main_tab3:
                 
     elif password != "":
         st.error("ሚስጥራዊ ቁጥር የተሳሳተ ነው!")
-    else:
-        st.info("💡 ወደ ሰራተኞች ዝርዝር ለመመለስ ከላይ ያለውን '🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር' የሚለውን ታብ ይጫኑ።")
