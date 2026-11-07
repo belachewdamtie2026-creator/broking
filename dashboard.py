@@ -54,14 +54,14 @@ def update_order_status(order_id, new_status):
     conn.commit()
     conn.close()
 
-# የጎን ምናሌ (Menu) - እዚህ ጋር ያሉት ስሞች ከታች ካሉት ጋር በትክክል ተገጣጥመዋል
+# የጎን ምናሌ (Menu)
 page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
     "📊 Admin Only"
 ])
 
-# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
+# ----- ጌፅ 1፦ የሰራተኛ መመዝገቢያ -----
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.title("የሰራተኛ መመዝገቢያ")
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
@@ -152,10 +152,22 @@ elif page == "📊 Admin Only":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
         
         with tab1:
-            st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ")
+            st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
             df = load_data()
             if not df.empty:
-                st.dataframe(df[["id", "name", "phone", "job_type", "experience"]], use_container_width=True)
+                # ፎቶዎችን ለእያንዳንዱ ሰራተኛ በተናጠል ማሳያ አሰራር
+                for index, row in df.iterrows():
+                    admin_col1, admin_col2 = st.columns([1, 4])
+                    with admin_col1:
+                        if row['photo']:
+                            img = Image.open(io.BytesIO(row['photo']))
+                            st.image(img, width=80)
+                        else:
+                            st.write("❌ ፎቶ የለም")
+                    with admin_col2:
+                        st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}")
+                        st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']}")
+                    st.markdown("---")
             else:
                 st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
                 
