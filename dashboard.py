@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 import io
 
-st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
+st.set_page_config(page_title="ፈጣን ድለላ", layout="wide")
 
 # የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
@@ -69,7 +69,7 @@ def delete_applicant(applicant_id):
     conn.close()
 
 # የዌብሳይቱ ዋና ርዕስ እና ታቦች
-st.title("🌟 የባህር ዳር ዲጂታል ድለላ")
+st.title("🌟 ፈጣን ድለላ")
 main_tab1, main_tab2, main_tab3 = st.tabs([
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
