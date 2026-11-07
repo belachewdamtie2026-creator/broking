@@ -6,7 +6,23 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# የዳታቤዝ መጀመሪያ ዝግጅት
+# የጎን ምናሌውን ቀስት ወደ 3 አግዳሚ መስመር ለመቀየር እና ውበት ለመጨመር የተደረገ የ CSS ማሻሻያ
+st.markdown("""
+    <style>
+        /* የቀስት ምልክቱን በ 3 አግዳሚ መስመር (Hamburger Icon) መተካት */
+        [data-testid="stSidebarCollapseButton"] button::before {
+            content: "☰" !important;
+            font-size: 24px !important;
+            font-weight: bold !important;
+            color: #333 !important;
+        }
+        [data-testid="stSidebarCollapseButton"] svg {
+            display: none !important;
+        }
+    </style>
+""", unsafe_with_html=True)
+
+# የዳታቤዝ መጀመሪያ ዝግጅት (የደሞዝ አምድ 'salary' ተጨምሯል)
 def init_db():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -17,6 +33,7 @@ def init_db():
             phone TEXT NOT NULL,
             job_type TEXT NOT NULL,
             experience TEXT,
+            salary INTEGER DEFAULT 0,
             photo BLOB
         )
     ''')
@@ -54,7 +71,6 @@ def update_order_status(order_id, new_status):
     conn.commit()
     conn.close()
 
-# ሰራተኛን ከዳታቤዝ ሙሉ በሙሉ ለማጥፋት የተጨመረ አዲስ ፈንክሽን
 def delete_applicant(applicant_id):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -80,6 +96,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
         phone = st.text_input("ስልክ ቁጥር:")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
+        salary = st.number_input("የሚፈልጉት የወር ደሞዝ (በብር):", min_value=0, step=500, value=3000)
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
         
         submit_button = st.form_submit_button("(ይመዝገቡ)")
@@ -89,11 +106,11 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
                 photo_bytes = uploaded_file.read()
                 conn = sqlite3.connect('database.db', check_same_thread=False)
                 cursor = conn.cursor()
-                cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)',
-                               (name, phone, job_type, experience, photo_bytes))
+                cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, salary, photo) VALUES (?, ?, ?, ?, ?, ?)',
+                               (name, phone, job_type, experience, salary, photo_bytes))
                 conn.commit()
                 conn.close()
-                st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን።")
+                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን።")
             else:
                 st.error("እባክዎ ሁሉንም በትክክል ያስገቡ!")
 
@@ -106,8 +123,19 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     df = load_data()
     
     if not df.empty:
-        job_filter = st.selectbox("የሚፈልጉትን የስራ አይነት ይምረጡ:", ["ሁሉም"] + list(df["job_type"].unique()))
+        # ማጣሪያዎች ጎን ለጎን
+        filter_col1, filter_col2 = st.columns(2)
+        with filter_col1:
+            job_filter = st.selectbox("የሚፈልጉትን የስራ አይነት ይምረጡ:", ["ሁሉም"] + list(df["job_type"].unique()))
+        with filter_col2:
+            max_salary = st.slider("ከፍተኛው የወር ደሞዝ ገደብ (በብር):", 
+                                   min_value=int(df["salary"].min()), 
+                                   max_value=int(df["salary"].max() + 1000), 
+                                   value=int(df["salary"].max() + 1000))
+        
+        # ዳታውን በስራ አይነት እና በደሞዝ ማጣራት
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
+        filtered_df = filtered_df[filtered_df["salary"] <= max_salary]
         
         for index, row in filtered_df.iterrows():
             col1, col2 = st.columns(2)
@@ -123,6 +151,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                 st.subheader(f"ስም: {row['name']}")
                 st.write(f"💼 **የስራ ዘርፍ:** {row['job_type']}")
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
+                st.write(f"💰 **የሚፈልጉት ደሞዝ:** {row['salary']} ብር")
                 
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ (ኮድ: BDR-{row['id']})", key=f"check_{row['id']}")
                 
@@ -164,7 +193,7 @@ elif page == "📊 Admin Only":
             df = load_data()
             if not df.empty:
                 for index, row in df.iterrows():
-                    admin_col1, admin_col2, admin_col3 = st.columns([1, 3, 1.5]) # የማጥፊያ ቁልፍ ለማስቀመጫ 3ኛ ኮለምን ተጨምሯል
+                    admin_col1, admin_col2, admin_col3 = st.columns([1, 3, 1])
                     
                     with admin_col1:
                         if row['photo']:
@@ -175,14 +204,13 @@ elif page == "📊 Admin Only":
                             
                     with admin_col2:
                         st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}")
-                        st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']}")
+                        st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']} | 💰 **ደሞዝ:** {row['salary']} ብር")
                         
                     with admin_col3:
-                        # በእያንዳንዱ ሰራተኛ መስመር ላይ የሚመጣ የማጥፊያ በተን
                         if st.button(f"❌ ሰራተኛውን አጥፋ", key=f"del_{row['id']}"):
                             delete_applicant(row['id'])
                             st.success(f"ሰራተኛ ቁጥር BDR-{row['id']} ከዝርዝር ጠፍቷል!")
-                            st.rerun() # ገጹን በቅጽበት ለማደስ
+                            st.rerun()
                             
                     st.markdown("---")
             else:
