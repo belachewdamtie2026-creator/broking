@@ -6,11 +6,10 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# የዳታቤዝ መጀመሪያ ዝግጅት (የቅጥር ጥያቄዎች ማከማቻ 'orders' ተጨምሯል)
+# የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
-    # የሰራተኞች ሠንጠረዥ
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS applicants (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -21,7 +20,6 @@ def init_db():
             photo BLOB
         )
     ''')
-    # የቀጣሪዎች ጥያቄ ማከማቻ ሠንጠረዥ
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,8 +56,8 @@ page = st.sidebar.radio("ምናሌ (Menu)", [
 
 # ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ ቅፅ -----
 if page == "📝 የሰራተኛ መመዝገቢያ ቅፅ":
-    st.title("📝 የባህር ዳር ኦንላይን ድለላ - የሰራተኛ መመዝገቢያ")
-    st.subheader("ከቤትዎ ሆነው መረጃዎን እና ፎቶዎን በቀላሉ ይመዝግቡ")
+    st.title("የሰራተኛ መመዝገቢያ")
+    st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     st.markdown("---")
     
     with st.form("registration_form", clear_on_submit=True):
@@ -86,8 +84,8 @@ if page == "📝 የሰራተኛ መመዝገቢያ ቅፅ":
 
 # ----- ገፅ 2፦ የሰራተኞች ማሳያ (ለቀጣሪዎች) -----
 elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
-    st.title("🏨 በስራ ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
-    st.subheader("የሚፈልጉትን ሰራተኛ በሙያ እና በፎቶ መርጠው ይቅጠሩ")
+    st.title("ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
+    st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     st.markdown("---")
     
     df = load_data()
@@ -97,7 +95,7 @@ elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         
         for index, row in filtered_df.iterrows():
-            col1, col2 = st.columns([1, 3])
+            col1, col2 = st.columns()
             
             with col1:
                 if row['photo']:
@@ -111,7 +109,6 @@ elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
                 st.write(f"💼 **የስራ ዘርፍ:** {row['job_type']}")
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
                 
-                # ቀጣሪው ፍላጎቱን የሚገልጽበት በተን
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ (ኮድ: BDR-{row['id']})", key=f"check_{row['id']}")
                 
                 if show_form:
@@ -159,7 +156,6 @@ elif page == "📊 የአስተዳዳሪ ሰሌዳ (Admin Only)":
             st.subheader("📥 ከቀጣሪዎች የመጡ የቅጥር ጥያቄዎች ዝርዝር")
             orders_df = load_orders()
             if not orders_df.empty:
-                # ጥያቄዎችን በሰንጠረዥ ማሳየት (የቀጣሪው ስም/ስልክ እና የተፈለገችው ሰራተኛ ስም/ኮድ)
                 st.dataframe(orders_df[["id", "employer_name", "employer_phone", "applicant_id", "applicant_name", "status"]], use_container_width=True)
             else:
                 st.info("እስካሁን ምንም የቀጥር ጥያቄ አልመጣም።")
