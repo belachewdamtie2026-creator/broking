@@ -47,6 +47,13 @@ def load_orders():
     conn.close()
     return df
 
+def update_order_status(order_id, new_status):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('UPDATE orders SET status = ? WHERE id = ?', (new_status, order_id))
+    conn.commit()
+    conn.close()
+
 # የጎን ምናሌ (Menu)
 page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ ቅፅ", 
@@ -95,7 +102,7 @@ elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         
         for index, row in filtered_df.iterrows():
-            col1, col2 = st.columns()
+            col1, col2 = st.columns(2) # እዚህ ጋር ቁጥር 2 ተጨምሯል
             
             with col1:
                 if row['photo']:
@@ -157,6 +164,13 @@ elif page == "📊 የአስተዳዳሪ ሰሌዳ (Admin Only)":
             orders_df = load_orders()
             if not orders_df.empty:
                 st.dataframe(orders_df[["id", "employer_name", "employer_phone", "applicant_id", "applicant_name", "status"]], use_container_width=True)
+                
+                st.markdown("### የጥያቄ ሁኔታ ማዘመኛ")
+                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
+                if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
+                    update_order_status(order_to_update, "ተጠናቋል")
+                    st.success(f"የጥያቄ ቁጥር {order_to_update} ሁኔታ በተሳካ ሁኔታ ታድሷል!")
+                    st.rerun()
             else:
                 st.info("እስካሁን ምንም የቀጥር ጥያቄ አልመጣም።")
                 
