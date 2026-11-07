@@ -62,19 +62,19 @@ page = st.sidebar.radio("ምናሌ (Menu)", [
 ])
 
 # ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ ቅፅ -----
-if page == "📝 የሰራተኛ መመዝገቢያ ቅፅ":
+if page == "📝 መመዝገቢያ ቅፅ":
     st.title("የሰራተኛ መመዝገቢያ")
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     st.markdown("---")
     
     with st.form("registration_form", clear_on_submit=True):
-        name = st.text_input("ሙሉ ስም (ለምሳሌ፡ አልማዝ አበበ):")
+        name = st.text_input("ሙሉ ስም")
         phone = st.text_input("ስልክ ቁጥር:")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
-        experience = st.text_input("የስራ ልምድ (ምሳሌ፡ 2 አመት በሆቴል):")
-        uploaded_file = st.file_uploader("ፎቶዎን እዚህ ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
+        experience = st.text_input("የስራ ልምድ:")
+        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
         
-        submit_button = st.form_submit_button("አፕላይ አድርግ (ይመዝገቡ)")
+        submit_button = st.form_submit_button("(ይመዝገቡ)")
         
         if submit_button:
             if name and phone and uploaded_file:
@@ -85,12 +85,12 @@ if page == "📝 የሰራተኛ መመዝገቢያ ቅፅ":
                                (name, phone, job_type, experience, photo_bytes))
                 conn.commit()
                 conn.close()
-                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እንገናኛለን።")
+                st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን።")
             else:
-                st.error("እባክዎ ስም፣ ስልክ እና ፎቶ በትክክል ያስገቡ!")
+                st.error("እባክዎ ሁሉንም በትክክል ያስገቡ!")
 
 # ----- ገፅ 2፦ የሰራተኞች ማሳያ (ለቀጣሪዎች) -----
-elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
+elif page == "🏨 የሰራተኛ ፈላጊዎች ገጽ":
     st.title("ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     st.markdown("---")
@@ -134,7 +134,7 @@ elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
                                 ''', (emp_name, emp_phone, row['id'], row['name']))
                                 conn.commit()
                                 conn.close()
-                                st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ለአስተዳዳሪው ደርሷል! በቅጽበት በስልክዎ እንገናኛለን።")
+                                st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳዉቅዎታለን።")
                             else:
                                 st.error("እባክዎ ስምዎትንና ስልክ ቁጥርዎን ያስገቡ!")
             st.markdown("---")
@@ -142,7 +142,7 @@ elif page == "🏨 የሰራተኞች ማሳያ (ለቀጣሪዎች)":
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
 # ----- ገፅ 3፦ የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ (Admin) -----
-elif page == "📊 የአስተዳዳሪ ሰሌዳ (Admin Only)":
+elif page == "📊 Admin Only":
     st.title("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
     
@@ -172,7 +172,7 @@ elif page == "📊 የአስተዳዳሪ ሰሌዳ (Admin Only)":
                     st.success(f"የጥያቄ ቁጥር {order_to_update} ሁኔታ በተሳካ ሁኔታ ታድሷል!")
                     st.rerun()
             else:
-                st.info("እስካሁን ምንም የቀጥር ጥያቄ አልመጣም።")
+                st.info("እስካሁን ምንም ጥያቄ አልመጣም።")
                 
     elif password != "":
-        st.error("የገቡት ሚስጥራዊ ቁጥር የተሳሳተ ነው!")
+        st.error("ሚስጥራዊ ቁጥር የተሳሳተ ነው!")
