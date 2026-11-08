@@ -71,7 +71,7 @@ st.markdown("""
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
         }
         
-        /* የፎቶዎች አቀማመጥ በክብ ቅርፅ */
+        /* የፎቶዎች አቀማመጥ */
         .worker-img {
             border-radius: 12px !important;
             object-fit: cover;
@@ -174,10 +174,10 @@ with main_tab1:
                 conn = sqlite3.connect('database.db', check_same_thread=False)
                 cursor = conn.cursor()
                 cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)',
-                               (name, phone, job_type, photo_bytes))
+                               (name, phone, job_type, experience, photo_bytes))
                 conn.commit()
                 conn.close()
-                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን።")
+                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እንገናኛለን።")
             else:
                 st.error("እባክዎ ሁሉንም መረጃዎች እና ፎቶዎን በትክክል ያስገቡ!")
 
@@ -189,16 +189,14 @@ with main_tab2:
     df = load_data()
     
     if not df.empty:
-        # የሰራ ሙያ ማጣሪያ ብቻ (ደሞዝ ጠፍቷል)
         job_filter = st.selectbox("የስራ አይነት በመምረጥ ያጣሩ፦", ["ሁሉም"] + list(df["job_type"].unique()))
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         
         st.markdown("---")
         
         for index, row in filtered_df.iterrows():
-            # እያንዳንዱን ሰራተኛ ውብ በሆነ ነጭ ካርድ ውስጥ ማሳየት
             st.markdown('<div class="worker-card">', unsafe_allow_html=True)
-            col1, col2 = st.columns([1, 3])
+            col1, col2 = st.columns(2)
             
             with col1:
                 if row['photo']:
@@ -248,5 +246,6 @@ with main_tab3:
         admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
         
         with admin_sub_tab1:
+            st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
             df = load_data()
             if not df.empty:
