@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
+# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
@@ -142,7 +142,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
-    st.subheader("🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
@@ -170,8 +170,8 @@ elif page == "📊 Admin Only":
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
                 btn_c1, btn_c2 = st.columns(2)
                 with btn_c1:
-                    if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
+                    done_click = st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
+                    if done_click:
                         update_order_status(order_to_update, "ተጠናቋል")
                         st.rerun()
                 with btn_c2:
-                    if st.button("❌ ጥያቄውን ከነጭራሹ አጥፋ", key=f"delorder_{order_to_update}"):
