@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ፣ ጥቁር ሳጥኖችን እና የግራ ምናሌውን (Sidebar) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS ማሻሻያ
+# 🎨 የፅሁፍ መጠኖችን ለማሳደግ፣ ጥቁር ሳጥኖችን፣ ታቦችን እና የግራ ምናሌውን (Sidebar) ሁልጊዜ ነጭ/ግልጽ ለማድረግ የተደረገ CSS ማሻሻያ
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
@@ -21,6 +21,17 @@ st.markdown("""
         div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
         div[data-baseweb="popover"] ul { background-color: #ffffff !important; color: #1e293b !important; }
         div[data-baseweb="popover"] li { color: #1e293b !important; background-color: #ffffff !important; }
+        
+        /* 📱 ስልክ ላይ በአድሚን ገፅ ያሉትን ታቦች (Tabs) ፅሁፍ ሁልጊዜ ግልጽ የማድረጊያ ማሻሻያ */
+        .stTabs [data-baseweb="tab"] p {
+            color: #1e3a8a !important;
+            font-size: 18px !important;
+            font-weight: bold !important;
+        }
+        .stTabs [aria-selected="true"] p {
+            color: #ffffff !important;
+        }
+        
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
@@ -165,9 +176,3 @@ elif page == "📊 Admin Only":
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
                 if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
-                if st.button("❌ ጥያቄውን ከነጭራሹ አጥፋ", key=f"delorder_{order_to_update}"):
-                    delete_order(order_to_update)
-                    st.rerun()
-            else: st.info("እስካሁን ምንም ጥያቄ አልመጣም።")
