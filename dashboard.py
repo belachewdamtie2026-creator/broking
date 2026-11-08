@@ -170,3 +170,26 @@ elif page == "📊 Admin Only":
         with tab2:
             orders_df = load_orders()
             if not orders_df.empty:
+                status_options = ["አዲስ ጥያቄ", "በሂደት ላይ", "ተጠናቋል"]
+                for index, row in orders_df.iterrows():
+                    order_id = int(row['id'])
+                    st.markdown('<div class="worker-card">', unsafe_allow_html=True)
+                    st.markdown(f"**ጥያቄ #{order_id}** | 🏢 **ቀጣሪ:** {row['employer_name']} | 📞 **ስልክ:** {row['employer_phone']}")
+                    st.markdown(f"👤 **የተጠየቀው ሰራተኛ:** {row['applicant_name']} (BDR-{row['applicant_id']})")
+                    st.markdown(f"📌 **አሁን ያለበት ሁኔታ:** {row['status']}")
+                    current_status = row['status'] if row['status'] in status_options else status_options[0]
+                    new_status = st.selectbox("ሁኔታ ቀይር:", status_options, index=status_options.index(current_status), key=f"status_{order_id}")
+                    col_save, col_del = st.columns(2)
+                    with col_save:
+                        if st.button("💾 ሁኔታውን አስቀምጥ", key=f"save_{order_id}"):
+                            update_order_status(order_id, new_status)
+                            st.rerun()
+                    with col_del:
+                        if st.button("❌ ጥያቄውን አጥፋ", key=f"delorder_{order_id}"):
+                            delete_order(order_id)
+                            st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.info("እስካሁን ምንም የቅጥር ጥያቄ አልመጣም።")
+    elif password:
+        st.error("❌ Password የተሳሳተ ነው።")
