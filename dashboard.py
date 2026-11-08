@@ -120,7 +120,7 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# 🚀 ወደ ቀድሞው አስተማማኝ አሰራር ተመለስን፦ የጎን ምናሌ (Sidebar)
+# የጎን ምናሌ (Sidebar)
 page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
@@ -234,3 +234,4 @@ elif page == "📊 Admin Only":
                     
                     with admin_col1:
                         if row['photo']:
+                            img = Image.open(io.BytesIO(row['photo']))
