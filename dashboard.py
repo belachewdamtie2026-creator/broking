@@ -9,67 +9,40 @@ st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", l
 # 🎨 📱 ስልክ ላይ ጥቁር የነበሩትን ፎርሞች፣ የፎቶ መጫኛ (File Uploader) እና መምረጫዎች ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS ማሻሻያ
 st.markdown("""
     <style>
-        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
-        
-        /* የፅሁፍ መጠኖችን በጠቅላላ ድረ-ገጹ ላይ ማሳደጊያ */
         html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li, span {
             font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
         }
-        
-        /* 📱 ስልክ ላይ ጥቁር የነበረውን የፎቶ መጫኛ (File Uploader) ሁልጊዜ ነጭ የማድረጊያ ማሻሻያ */
         [data-testid="stFileUploader"] div, [data-testid="stFileUploaderDropzone"] {
-            background-color: #ffffff !important;
-            color: #1e293b !important;
-            border: 2px dashed #cbd5e1 !important;
+            background-color: #ffffff !important; color: #1e293b !important; border: 2px dashed #cbd5e1 !important;
         }
-        [data-testid="stFileUploaderDropzone"] p, [data-testid="stFileUploaderDropzone"] span {
-            color: #1e293b !important;
-        }
-        
-        /* 📱 የፅሁፍ መግቢያ ሳጥኖች (Inputs) ሁልጊዜ ነጭ ጀርባ እና ግልፅ ጠርዝ እንዲኖራቸው የማስገደጃ ማሻሻያ */
+        [data-testid="stFileUploaderDropzone"] p, [data-testid="stFileUploaderDropzone"] span { color: #1e293b !important; }
         div[data-testid="stTextInput"] input, div[data-testid="stNumberInput"] input {
-            background-color: #ffffff !important;
-            color: #1e293b !important;
-            border: 1px solid #cbd5e1 !important;
+            background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important;
         }
-        
-        /* የሰንጠረዥ (DataFrame) ቀለም ሁልጊዜ ነጭ እና ጥቁር ፅሁፍ የማድረጊያ ማሻሻያ */
         [data-testid="stDataFrame"] div, [data-testid="stDataFrame"] table, [data-testid="stDataFrame"] th, [data-testid="stDataFrame"] td {
             background-color: #ffffff !important; color: #1e293b !important;
         }
-        
-        /* የግራ ምናሌው (Sidebar) ሁልጊዜ ነጭ እንዲሆን የማስገደጃ ማሻሻያ */
         [data-testid="stSidebar"] { background-color: #ffffff !important; background: #ffffff !important; }
         [data-testid="stSidebar"] .stRadio label p { color: #1e293b !important; font-size: 18px !important; font-weight: 700 !important; }
-        
-        /* መምረጫ ሳጥኖች (Dropdowns) ሁልጊዜ ነጭ የማድረጊያ ማሻሻያ */
         div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
         div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li { background-color: #ffffff !important; color: #1e293b !important; }
-        
-        /* በአድሚን ገፅ ያሉትን ታቦች (Tabs) ፅሁፍ ሁልጊዜ ግልጽ የማድረጊያ ማሻሻያ */
         .stTabs [data-baseweb="tab"] p { color: #1e3a8a !important; font-size: 18px !important; font-weight: bold !important; }
         .stTabs [aria-selected="true"] p { color: #ffffff !important; }
-        
-        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
-        
-        /* የቲክ ማድረጊያ ሳጥን ማጉያ */
         div[data-testid="stCheckbox"] {
             background-color: #f0fdf4 !important; padding: 14px 24px !important; border-radius: 12px !important;
             border: 2px solid #22c55e !important; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
             margin: 15px 0 !important; width: fit-content !important;
         }
         div[data-testid="stCheckbox"] label p { font-size: 21px !important; font-weight: 800 !important; color: #15803d !important; }
-        
+        input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
-        
-        /* በተኖች */
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
             background-color: #16a34a !important; color: white !important; border-radius: 12px !important;
             border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 20px !important;
@@ -187,3 +160,13 @@ elif page == "📊 Admin Only":
             df_admin = load_data()
             if not df_admin.empty:
                 for index, row in df_admin.iterrows():
+                    st.markdown('<div class="worker-card">', unsafe_allow_html=True)
+                    st.markdown(f"**BDR-{row['id']}** | **ስም:** {row['name']} | 📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']}")
+                    if st.button("❌ ይህንን ሰራተኛ አጥፋ", key=f"del_{row['id']}"):
+                        delete_applicant(row['id'])
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+            else: st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
+        with tab2:
+            orders_df = load_orders()
+            if not orders_df.empty:
