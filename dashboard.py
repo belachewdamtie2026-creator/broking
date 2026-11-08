@@ -169,10 +169,10 @@ elif page == "📊 Admin Only":
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
                 
-                # 🚀 ክፍተቱ ፍጹም እንዳይበላሽ በአዲስ እና ቀላል መንገድ ጎን ለጎን ተዋቅረዋል
+                # 🚀 ሁለቱ ቁልፎች እዚህ ጋር ያለምንም የክፍተት ስህተት ሙሉ በሙሉ ጎን ለጎን (Side by Side) እንዲቀመጡ ተደርጓል
                 btn_col1, btn_col2 = st.columns(2)
                 
-                done_btn = btn_col1.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
-                if done_btn:
+                if btn_col1.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
                     update_order_status(order_to_update, "ተጠናቋል")
                     st.rerun()
+                    
