@@ -32,7 +32,7 @@ st.markdown("""
             margin-bottom: 35px;
         }
         
-        /* አዲስ ባለቀለም የሰራተኞች ካርድ (Vibrant Card Design) */
+        /* አዲስ ባለቀለም የሰራተኞች ካርድ */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px;
@@ -177,8 +177,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             
             with col1:
                 if row['photo']:
-                    image = Image.open(io.BytesIO(row['photo']))
-                    st.image(image, width=160, caption=f"ኮድ፡ BDR-{row['id']}")
+                    st.image(Image.open(io.BytesIO(row['photo'])), width=160, caption=f"ኮድ፡ BDR-{row['id']}")
                 else:
                     st.image("https://placeholder.com", width=160, caption="ፎቶ የለም")
                     
@@ -210,14 +209,14 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                                 conn.close()
                                 st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በአጭር ጊዜ ውስጥ በስልክ እንገናኛለን።")
                             else:
-                                st.error("እባክዎ ስምዎን and ስልክ ቁጥርዎን ያስገቡ!")
+                                st.error("እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!")
             st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
 # ----- ገፅ 3፦ Admin Only -----
 elif page == "📊 Admin Only":
-    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
     
     password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
     
@@ -226,11 +225,12 @@ elif page == "📊 Admin Only":
         
         with admin_sub_tab1:
             st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
-            df = load_data()
-            if not df.empty:
-                for index, row in df.iterrows():
+            df_admin = load_data()
+            if not df_admin.empty:
+                for idx, r in df_admin.iterrows():
                     st.markdown('<div class="worker-card">', unsafe_allow_html=True)
-                    admin_col1, admin_col2, admin_col3 = st.columns(3)
-                    
-                    with admin_col1:
-                        if row['photo']:
+                    a_col1, a_col2, a_col3 = st.columns(3)
+                    with a_col1:
+                        if r['photo']:
+                            st.image(Image.open(io.BytesIO(r['photo'])), width=90)
+                        else:
