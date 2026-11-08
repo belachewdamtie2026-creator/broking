@@ -32,7 +32,7 @@ st.markdown("""
             margin-bottom: 35px;
         }
         
-        /* የሰራተኞች ካርድ (Card Design) ውበት */
+        /* አዲስ ባለቀለም የሰራተኞች ካርድ (Vibrant Card Design) */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px;
@@ -234,4 +234,3 @@ elif page == "📊 Admin Only":
                     
                     with admin_col1:
                         if row['photo']:
-                            img = Image.open(io.BytesIO(row['photo']))
