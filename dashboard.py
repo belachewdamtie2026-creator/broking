@@ -180,7 +180,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             with col2:
                 badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 st.subheader(f"ስም: {row['name']}")
-                st.markdown(f"<p style='font-size:18px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
                 
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ", key=f"check_{row['id']}")
@@ -204,9 +204,9 @@ elif page == "📊 Admin Only":
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
         with tab1:
-            df = load_data()
-            if not df.empty:
-                for index, row in df.iterrows():
+            df_admin = load_data()
+            if not df_admin.empty:
+                for index, row in df_admin.iterrows():
                     st.markdown('<div class="worker-card">', unsafe_allow_html=True)
                     admin_col1, admin_col2, admin_col3 = st.columns(3)
                     with admin_col1:
