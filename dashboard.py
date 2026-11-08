@@ -71,13 +71,6 @@ st.markdown("""
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
         }
         
-        /* የፎቶዎች አቀማመጥ */
-        .worker-img {
-            border-radius: 12px !important;
-            object-fit: cover;
-            border: 3px solid #EFF6FF;
-        }
-        
         /* ፎርሞች እና ሳጥኖች */
         .stForm {
             background-color: #ffffff !important;
@@ -154,7 +147,7 @@ main_tab1, main_tab2, main_tab3 = st.tabs([
     "📊 Admin Only"
 ])
 
-# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
+# ----- ጌፅ 1፦ የሰራተኛ መመዝገቢያ -----
 with main_tab1:
     st.markdown("<h3 style='color:#1E3A8A; font-weight:600;'>የሰራተኛ መመዝገቢያ ቅፅ</h3>", unsafe_allow_html=True)
     st.markdown("<p style='color:#6B7280;'>መረጃዎን በትክክል በመሙላት በፍጥነት ስራ ያግኙ</p>", unsafe_allow_html=True)
@@ -249,3 +242,7 @@ with main_tab3:
             st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
             df = load_data()
             if not df.empty:
+                # 🚀 የክፍተት (Indentation) ስህተት ሙሉ በሙሉ እዚህ ጋር ተስተካክሏል
+                for index, row in df.iterrows():
+                    admin_col1, admin_col2, admin_col3 = st.columns(3)
+                    
