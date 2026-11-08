@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 import io
 
-st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
+st.set_page_config(page_title="ፈጣን ድለላ", layout="wide")
 
 # 🎨 📱 ስልክ ላይ ጥቁር የነበሩትን ፎርሞች፣ የፎቶ መጫኛ (File Uploader) እና መምረጫዎች ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS ማሻሻያ
 st.markdown("""
@@ -118,7 +118,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
     with st.form("registration_form", clear_on_submit=True):
         name = st.text_input("ሙሉ ስም")
         phone = st.text_input("ስልክ ቁጥር:")
-        job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
+        job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
         submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
@@ -129,7 +129,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
             cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name, phone, job_type, experience, photo_bytes))
             conn.commit()
             conn.close()
-            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል!")
+            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
 
 elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
@@ -146,7 +146,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                 else:
                     st.write("❌ ፎቶ የለም")
             with col2:
-                badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
+                badge_color = "#ea580c" if row['job_type'] == "የቡና ባለሙያ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 st.subheader(f"ስም: {row['name']}")
                 st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
@@ -155,14 +155,14 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
-                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን በቅጽበት ላክ 📩")
+                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን ላክ 📩")
                         if submit_order and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
                             cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
                             conn.commit()
                             conn.close()
-                            st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል!")
+                            st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
