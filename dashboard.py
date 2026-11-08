@@ -6,46 +6,56 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ፣ ጥቁር ሳጥኖችን፣ ታቦችን እና የግራ ምናሌውን (Sidebar) ሁልጊዜ ነጭ/ግልጽ ለማድረግ የተደረገ CSS ማሻሻያ
+# 🎨 📱 ስልክ ላይ ጥቁር የሆኑትን ሰንጠረዦች (Tables) እና መምረጫዎች ሁልጊዜ ነጭና ግልጽ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
+        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
-        html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li {
+        
+        /* የፅሁፍ መጠኖችን በጠቅላላ ድረ-ገጹ ላይ ማሳደጊያ */
+        html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li, span {
             font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
         }
-        h1 { font-size: 46px !important; font-weight: 900 !important; color: #1e3a8a !important; }
-        h2 { font-size: 32px !important; font-weight: 800 !important; color: #1e3a8a !important; }
-        h3 { font-size: 26px !important; font-weight: 700 !important; color: #1e3a8a !important; }
+        
+        /* 📱 ስልክ ላይ ጥቁር የነበረውን የሰንጠረዥ (Dataframe) ቀለም ሁልጊዜ ነጭ እና ጥቁር ፅሁፍ የማድረጊያ ማሻሻያ */
+        [data-testid="stDataFrame"] div, [data-testid="stDataFrame"] table, [data-testid="stDataFrame"] th, [data-testid="stDataFrame"] td {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+        }
+        
+        /* የግራ ምናሌው (Sidebar) ሁልጊዜ ነጭ እንዲሆን የማስገደጃ ማሻሻያ */
         [data-testid="stSidebar"] { background-color: #ffffff !important; background: #ffffff !important; }
         [data-testid="stSidebar"] .stRadio label p { color: #1e293b !important; font-size: 18px !important; font-weight: 700 !important; }
+        
+        /* መምረጫ ሳጥኖች (Dropdowns) ሁልጊዜ ነጭ የማድረጊያ ማሻሻያ */
         div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
         div[data-baseweb="popover"] ul { background-color: #ffffff !important; color: #1e293b !important; }
         div[data-baseweb="popover"] li { color: #1e293b !important; background-color: #ffffff !important; }
         
-        /* 📱 ስልክ ላይ በአድሚን ገፅ ያሉትን ታቦች (Tabs) ፅሁፍ ሁልጊዜ ግልጽ የማድረጊያ ማሻሻያ */
-        .stTabs [data-baseweb="tab"] p {
-            color: #1e3a8a !important;
-            font-size: 18px !important;
-            font-weight: bold !important;
-        }
-        .stTabs [aria-selected="true"] p {
-            color: #ffffff !important;
-        }
+        /* በአድሚን ገፅ ያሉትን ታቦች (Tabs) ፅሁፍ ሁልጊዜ ግልጽ የማድረጊያ ማሻሻያ */
+        .stTabs [data-baseweb="tab"] p { color: #1e3a8a !important; font-size: 18px !important; font-weight: bold !important; }
+        .stTabs [aria-selected="true"] p { color: #ffffff !important; }
         
+        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
+        
+        /* የቲክ ማድረጊያ ሳጥን ማጉያ */
         div[data-testid="stCheckbox"] {
             background-color: #f0fdf4 !important; padding: 14px 24px !important; border-radius: 12px !important;
             border: 2px solid #22c55e !important; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
             margin: 15px 0 !important; width: fit-content !important;
         }
         div[data-testid="stCheckbox"] label p { font-size: 21px !important; font-weight: 800 !important; color: #15803d !important; }
+        
         input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
+        
+        /* በተኖች */
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
             background-color: #16a34a !important; color: white !important; border-radius: 12px !important;
             border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 20px !important;
@@ -172,7 +182,3 @@ elif page == "📊 Admin Only":
             else: st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
         with tab2:
             orders_df = load_orders()
-            if not orders_df.empty:
-                st.dataframe(orders_df, use_container_width=True)
-                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                
