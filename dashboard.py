@@ -6,28 +6,38 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የድረ-ገጹን መዋቅር ሳይነካ ኢንተርፌሱን ማራኪ ለማድረግ የተጨመረ ባለቀለም CSS ዲዛይን
+# 🎨 የድረ-ገጹን መዋቅር ሳይነካ በተለያየ ደማቅ ቀለም (ቀይ፣ ቢጫ፣ ሰማያዊ) ያሸበረቀ CSS ዲዛይን
 st.markdown("""
     <style>
+        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp {
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%);
         }
+        
+        /* የሰራተኞች ካርድ ውበት - በደማቅ ቀይ መስመር የተከበበ እና ማራኪ ባለቀለም ጀርባ */
         .worker-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
             border-radius: 20px;
             padding: 26px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            border-left: 6px solid #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.1);
+            border-left: 6px solid #dc2626;
+            border-top: 1px solid #fca5a5;
             margin-bottom: 30px;
         }
-        .stImage > img {
-            border-radius: 15px !important;
-        }
+        
+        /* የሰራተኛ መመዝገቢያ ፎርም ውበት - በደማቅ ቢጫ የተሸለመ */
         .stForm {
-            background: #ffffff !important;
+            background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%) !important;
             border-radius: 20px !important;
             padding: 35px !important;
-            border: 1px solid #cbd5e1 !important;
+            border: 2px solid #eab308 !important;
+            box-shadow: 0 10px 20px rgba(234, 179, 8, 0.1) !important;
+        }
+        
+        /* የፎቶዎች ውበት */
+        .stImage > img {
+            border-radius: 15px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -80,7 +90,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
-        submit_button = st.form_submit_button("(ይመዝገቡ)")
+        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
         
         if submit_button and name and phone and uploaded_file:
             photo_bytes = uploaded_file.read()
@@ -117,7 +127,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
-                        if st.form_submit_button("የቅጥር ጥያቄውን ላክ") and emp_name and emp_phone:
+                        if st.form_submit_button("የቅጥር ጥያቄውን ላክ 📩") and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
                             cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
@@ -135,7 +145,7 @@ elif page == "📊 Admin Only":
             df = load_data()
             if not df.empty:
                 for index, row in df.iterrows():
-                    st.markdown('<div class="worker-card">', unsafe_allow_html=True)
+                    st.markdown('<div class="worker-card" style="border-left-color: #1e3a8a;">', unsafe_allow_html=True)
                     admin_col1, admin_col2, admin_col3 = st.columns(3)
                     with admin_col1:
                         if row['photo']:
