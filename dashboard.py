@@ -208,7 +208,6 @@ with main_tab2:
                     st.image("https://placeholder.com", width=160, caption="ፎቶ የለም")
                     
             with col2:
-                # እንደየስራ ዘርፉ የተለያየ የባጅ ቀለም መስጠት
                 badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 
                 st.markdown(f"<h2 style='color:#1e3a8a; margin-top:0;'>ስም: {row['name']}</h2>", unsafe_allow_html=True)
@@ -239,3 +238,5 @@ with main_tab2:
                                 st.error("እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!")
             st.markdown('</div>', unsafe_allow_html=True)
     else:
+        st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
+
