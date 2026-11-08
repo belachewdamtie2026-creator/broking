@@ -32,33 +32,7 @@ st.markdown("""
             margin-bottom: 35px;
         }
         
-        /* ከላይ ያሉ ታቦች (Tabs) ውበት */
-        .stTabs [data-baseweb="tab-list"] {
-            gap: 15px;
-            justify-content: center;
-        }
-        .stTabs [data-baseweb="tab"] {
-            background-color: #3b82f6;
-            padding: 14px 28px !important;
-            border-radius: 50px !important;
-            font-weight: 700 !important;
-            color: #ffffff !important;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border: none !important;
-        }
-        .stTabs [data-baseweb="tab"]:hover {
-            background-color: #1d4ed8;
-            color: #ffffff !important;
-            transform: scale(1.05);
-        }
-        .stTabs [aria-selected="true"] {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2) !important;
-        }
-        
-        /* አዲስ ባለቀለም የሰራተኞች ካርድ (Vibrant Card Design) */
+        /* የሰራተኞች ካርድ (Card Design) ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px;
@@ -146,18 +120,19 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# ማራኪ ዋና አርዕስት
-st.markdown('<div class="main-title">💼 ፈጣን ድለላ</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">የባህር ዳር ዘመናዊ የሰራተኛ እና ቀጣሪ ማገናኛ መድረክ</div>', unsafe_allow_html=True)
-
-main_tab1, main_tab2, main_tab3 = st.tabs([
+# 🚀 ወደ ቀድሞው አስተማማኝ አሰራር ተመለስን፦ የጎን ምናሌ (Sidebar)
+page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
     "📊 Admin Only"
 ])
 
+# ማራኪ ዋና አርዕስት
+st.markdown('<div class="main-title">💼 ፈጣን ድለላ</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">የባህር ዳር ዘመናዊ የሰራተኛ እና ቀጣሪ ማገናኛ መድረክ</div>', unsafe_allow_html=True)
+
 # ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
-with main_tab1:
+if page == "📝 የሰራተኛ መመዝገቢያ":
     st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>የሰራተኛ መመዝገቢያ ቅፅ</h3>", unsafe_allow_html=True)
     st.markdown("<p style='color:#475569; margin-bottom:20px;'>መረጃዎን በትክክል በመሙላት በፍጥነት ስራ ያግኙ</p>", unsafe_allow_html=True)
     
@@ -184,7 +159,7 @@ with main_tab1:
                 st.error("እባክዎ ሁሉንም መረጃዎች እና ፎቶዎን በትክክል ያስገቡ!")
 
 # ----- ገፅ 2፦ ዝግጁ የሆኑ ሰራተኞች ዝርዝር -----
-with main_tab2:
+elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>በስራ ዝግጁ የሆኑ ሰራተኞች</h3>", unsafe_allow_html=True)
     st.markdown("<p style='color:#475569; margin-bottom:20px;'>የሚፈልጉትን ሰራተኛ በሙያ መርጠው የቅጥር ጥያቄ መላክ ይችላሉ</p>", unsafe_allow_html=True)
     
@@ -240,3 +215,22 @@ with main_tab2:
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
+# ----- ገፅ 3፦ Admin Only -----
+elif page == "📊 Admin Only":
+    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
+    
+    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
+    
+    if password == "bdr123":
+        admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
+        
+        with admin_sub_tab1:
+            st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
+            df = load_data()
+            if not df.empty:
+                for index, row in df.iterrows():
+                    st.markdown('<div class="worker-card">', unsafe_allow_html=True)
+                    admin_col1, admin_col2, admin_col3 = st.columns(3)
+                    
+                    with admin_col1:
+                        if row['photo']:
