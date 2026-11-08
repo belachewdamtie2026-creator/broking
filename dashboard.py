@@ -9,21 +9,34 @@ st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", l
 # 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
+        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
+        
+        /* የፅሁፍ መጠኖችን በጠቅላላ ድረ-ገጹ ላይ ማሳደጊያ */
         html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li {
             font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
         }
+        
+        /* የዋና አርዕስቶች መጠን ማሳደጊያ */
         h1 { font-size: 46px !important; font-weight: 900 !important; color: #1e3a8a !important; }
         h2 { font-size: 32px !important; font-weight: 800 !important; color: #1e3a8a !important; }
         h3 { font-size: 26px !important; font-weight: 700 !important; color: #1e3a8a !important; }
-        div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
+        
+        /* ስልክ ላይ ጥቁር የሆኑትን መምረጫ ሳጥኖች ሁልጊዜ ነጭ የማድረጊያ ማሻሻያ */
+        div[data-baseweb="select"] > div {
+            background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important;
+        }
         div[data-baseweb="popover"] ul { background-color: #ffffff !important; color: #1e293b !important; }
         div[data-baseweb="popover"] li { color: #1e293b !important; background-color: #ffffff !important; }
+        
+        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
+        
+        /* የቲክ ማድረጊያ ሳጥን ማጉያ */
         div[data-testid="stCheckbox"] {
             background-color: #f0fdf4 !important; padding: 14px 24px !important; border-radius: 12px !important;
             border: 2px solid #22c55e !important; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
@@ -33,12 +46,26 @@ st.markdown("""
         input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
+
+        /* ደማቅ አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ */
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
             background-color: #16a34a !important; color: white !important; border-radius: 12px !important;
             border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 20px !important;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3) !important; transition: all 0.3s ease !important;
         }
-        div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
-        div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
+        
+        /* ❌ ቀይ በተን - ለአጥፊው በተን */
+        div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] {
+            background-color: #dc2626 !important; color: white !important; border-radius: 12px !important;
+            border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 18px !important;
+            box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3) !important; transition: all 0.3s ease !important;
+        }
+
+        /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
+        div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) {
+            background-color: #2563eb !important; color: white !important; border-radius: 12px !important;
+            border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 18px !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -155,24 +182,6 @@ elif page == "📊 Admin Only":
                     with admin_col1:
                         if row['photo']:
                             st.image(Image.open(io.BytesIO(row['photo'])), width=80)
+                        else:
+                            st.write("❌ ፎቶ የለም")
                     with admin_col2:
-                        st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}\n\n📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']}")
-                    with admin_col3:
-                        if st.button(f"❌ አጥፋ", key=f"del_{row['id']}"):
-                            delete_applicant(row['id'])
-                            st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-            else: st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
-        with tab2:
-            orders_df = load_orders()
-            if not orders_df.empty:
-                st.dataframe(orders_df, use_container_width=True)
-                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                
-                # 🚀 ሁለቱ ቁልፎች እዚህ ጋር ያለምንም የክፍተት ስህተት ሙሉ በሙሉ ጎን ለጎን (Side by Side) እንዲቀመጡ ተደርጓል
-                btn_col1, btn_col2 = st.columns(2)
-                
-                if btn_col1.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
-                    
