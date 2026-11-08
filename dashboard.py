@@ -210,14 +210,14 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                                 conn.close()
                                 st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በአጭር ጊዜ ውስጥ በስልክ እንገናኛለን።")
                             else:
-                                st.error("እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!")
+                                st.error("እባክዎ ስምዎን and ስልክ ቁጥርዎን ያስገቡ!")
             st.markdown('</div>', unsafe_allow_html=True)
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
 # ----- ገፅ 3፦ Admin Only -----
 elif page == "📊 Admin Only":
-    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
     
     password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
     
