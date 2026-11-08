@@ -6,7 +6,6 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
@@ -169,8 +168,10 @@ elif page == "📊 Admin Only":
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
                 
-                # 🚀 የክፍተት ችግር ሙሉ በሙሉ እዚህ ጋር ተስተካክሏል (ያለ with btn_c2)
-                done_clicked = st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
-                if done_clicked:
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
+                # 🚀 ሁለቱ ቁልፎች እዚህ ጋር ሙሉ በሙሉ ያለ ምንም እንከን ጎን ለጎን (Side by Side) እንዲሆኑ ተደርጓል
+                btn_col1, btn_col2 = st.columns(2)
+                with btn_col1:
+                    if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
+                        update_order_status(order_to_update, "ተጠናቋል")
+                        st.rerun()
+                with btn_col2:
