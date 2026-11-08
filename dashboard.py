@@ -6,11 +6,23 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 በተኖቹን እና ቼክቦክሱን በደማቅ ቀለማት ለማሸብረቅ የተስተካከለ CSS ዲዛይን
+# 🎨 የፅሁፍ መጠኖችን (Font Sizes) በሙሉ ከፍ እና ደመቅ ለማድረግ የተሻሻለ CSS ዲዛይን
 st.markdown("""
     <style>
         /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
+        
+        /* 🚀 የፅሁፍ መጠኖችን በጠቅላላ ድረ-ገጹ ላይ ማሳደጊያ */
+        html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li {
+            font-size: 19px !important;
+            font-weight: 500 !important;
+            color: #1e293b !important;
+        }
+        
+        /* የዋና አርዕስቶች መጠን ማሳደጊያ */
+        h1 { font-size: 46px !important; font-weight: 900 !important; color: #1e3a8a !important; }
+        h2 { font-size: 32px !important; font-weight: 800 !important; color: #1e3a8a !important; }
+        h3 { font-size: 26px !important; font-weight: 700 !important; color: #1e3a8a !important; }
         
         /* የሰራተኞች ካርድ ውበት */
         .worker-card {
@@ -20,28 +32,32 @@ st.markdown("""
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
         
-        /* 🚀 የቲክ ማድረጊያ ሳጥን (Checkbox) ማጉያ */
+        /* የቲክ ማድረጊያ ሳጥን (Checkbox) ማጉያ */
         div[data-testid="stCheckbox"] {
-            background-color: #f0fdf4 !important; padding: 12px 20px !important;
+            background-color: #f0fdf4 !important; padding: 14px 24px !important;
             border-radius: 12px !important; border: 2px solid #22c55e !important;
             box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
             margin: 15px 0 !important; width: fit-content !important;
         }
-        div[data-testid="stCheckbox"] label p { font-size: 18px !important; font-weight: 800 !important; color: #15803d !important; }
+        div[data-testid="stCheckbox"] label p { font-size: 21px !important; font-weight: 800 !important; color: #15803d !important; }
         
-        /* የሰራተኛ መመዝገቢያ ፎርም ውበት */
+        /* የፎርም መሙያ ሳጥኖች ውስጥ ያሉ ፅሁፎችን ማሳደጊያ */
+        input, select, textarea {
+            font-size: 18px !important;
+        }
+        
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
 
-        /* 🚀 ደማቅ አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ (ሙሉ በሙሉ እዚህ ተስተካክሏል) */
+        /* ደማቅ አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ */
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
             background-color: #16a34a !important;
             color: white !important;
             border-radius: 12px !important;
             border: none !important;
-            padding: 12px 28px !important;
+            padding: 14px 32px !important;
             font-weight: 800 !important;
-            font-size: 18px !important;
+            font-size: 20px !important;
             box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3) !important;
             transition: all 0.3s ease !important;
             width: fit-content !important;
@@ -49,7 +65,6 @@ st.markdown("""
         div.stFormSubmitButton > button:hover {
             background-color: #15803d !important;
             transform: translateY(-2px) !important;
-            box-shadow: 0 6px 14px rgba(22, 163, 74, 0.4) !important;
         }
 
         /* ❌ ቀይ በተን - ለአጥፊው በተን */
@@ -58,8 +73,9 @@ st.markdown("""
             color: white !important;
             border-radius: 10px !important;
             border: none !important;
-            padding: 6px 16px !important;
+            padding: 8px 20px !important;
             font-weight: bold !important;
+            font-size: 16px !important;
         }
         div.stButton > button[key^="del_"]:hover {
             background-color: #b91c1c !important;
@@ -72,8 +88,9 @@ st.markdown("""
             color: white !important;
             border-radius: 10px !important;
             border: none !important;
-            padding: 8px 20px !important;
+            padding: 10px 24px !important;
             font-weight: bold !important;
+            font-size: 16px !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -155,7 +172,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             with col2:
                 badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 st.subheader(f"ስም: {row['name']}")
-                st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size:18px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
                 
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ", key=f"check_{row['id']}")
@@ -174,7 +191,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
-    st.subheader("🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
@@ -193,12 +210,3 @@ elif page == "📊 Admin Only":
                         if st.button(f"❌ አጥፋ", key=f"del_{row['id']}"):
                             delete_applicant(row['id'])
                             st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-        with tab2:
-            orders_df = load_orders()
-            if not orders_df.empty:
-                st.dataframe(orders_df, use_container_width=True)
-                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
