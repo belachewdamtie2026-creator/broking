@@ -175,4 +175,4 @@ elif page == "📊 Admin Only":
             if not orders_df.empty:
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
+                
