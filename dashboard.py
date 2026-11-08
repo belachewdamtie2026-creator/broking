@@ -13,7 +13,7 @@ st.markdown("""
         [data-testid="stHeader"] { background-color: #ffffff !important; }
         [data-testid="stHeader"] *, [data-testid="stHeader"] svg { color: #1e293b !important; fill: #1e293b !important; }
         html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li, span {
-            font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
+            font-size: 22px !important; font-weight: 500 !important; color: #1e293b !important;
         }
         [data-testid="stFileUploader"] div, [data-testid="stFileUploaderDropzone"] {
             background-color: #ffffff !important; color: #1e293b !important; border: 2px dashed #cbd5e1 !important;
@@ -29,7 +29,7 @@ st.markdown("""
         [data-testid="stSidebar"] .stRadio label p { color: #1e293b !important; font-size: 18px !important; font-weight: 700 !important; }
         div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
         div[data-baseweb="popover"] ul, div[data-baseweb="popover"] li { background-color: #ffffff !important; color: #1e293b !important; }
-        .stTabs [data-baseweb="tab"] p { color: #1e3a8a !important; font-size: 18px !important; font-weight: bold !important; }
+        .stTabs [data-baseweb="tab"] p { color: #1e3a8a !important; font-size: 21px !important; font-weight: bold !important; }
         .stTabs [aria-selected="true"] p { color: #ffffff !important; }
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
@@ -42,7 +42,7 @@ st.markdown("""
             margin: 15px 0 !important; width: fit-content !important;
         }
         div[data-testid="stCheckbox"] label p { font-size: 21px !important; font-weight: 800 !important; color: #15803d !important; }
-        input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
+        input, select, textarea { font-size: 22px !important; color: #1e293b !important; background-color: #ffffff !important; }
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
@@ -51,6 +51,17 @@ st.markdown("""
         }
         div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
         div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
+
+        /* 🔠 ትልቅ የጽሁፍ መጠኖች */
+        h1, h1 * { font-size: 42px !important; font-weight: 800 !important; color: #1e3a8a !important; }
+        h2, h2 *, h3, h3 * { font-size: 30px !important; font-weight: 700 !important; color: #1e293b !important; }
+        [data-testid="stWidgetLabel"] p { font-size: 23px !important; font-weight: 700 !important; }
+        div[role="radiogroup"] label p { font-size: 22px !important; font-weight: 700 !important; }
+        div[data-baseweb="select"] * { font-size: 22px !important; }
+        div[data-baseweb="popover"] li, div[data-baseweb="popover"] li * { font-size: 22px !important; }
+        div.stButton > button p, div.stFormSubmitButton > button p { font-size: 22px !important; font-weight: 800 !important; }
+        [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p { font-size: 20px !important; }
+        [data-testid="stAlert"] p { font-size: 22px !important; }
     </style>
 """, unsafe_allow_html=True)
 
