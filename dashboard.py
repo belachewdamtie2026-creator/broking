@@ -6,24 +6,41 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
+# 🎨 የፅሁፍ መጠኖችን ለማሳደግ፣ የጥቁር ሳጥኖችን እና የግራ ምናሌውን (Sidebar) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS ማሻሻያ
 st.markdown("""
     <style>
+        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
+        
+        /* 🚀 የፅሁፍ መጠኖችን በጠቅላላ ድረ-ገጹ ላይ ማሳደጊያ */
         html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li {
             font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
         }
-        h1 { font-size: 46px !important; font-weight: 900 !important; color: #1e3a8a !important; }
-        h2 { font-size: 32px !important; font-weight: 800 !important; color: #1e3a8a !important; }
-        h3 { font-size: 26px !important; font-weight: 700 !important; color: #1e3a8a !important; }
+        
+        /* 📱 ስልክ ላይ የግራ ምናሌው (Sidebar) ሁልጊዜ ነጭ እና ፅሁፎቹ ጥቁር እንዲሆኑ የማስገደጃ ማሻሻያ */
+        [data-testid="stSidebar"] {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+        [data-testid="stSidebar"] .stRadio label p {
+            color: #1e293b !important;
+            font-size: 18px !important;
+            font-weight: 700 !important;
+        }
+        
+        /* ስልክ ላይ ጥቁር የሆኑትን መምረጫ ሳጥኖች ሁልጊዜ ነጭ የማድረጊያ ማሻሻያ */
         div[data-baseweb="select"] > div { background-color: #ffffff !important; color: #1e293b !important; border: 1px solid #cbd5e1 !important; }
         div[data-baseweb="popover"] ul { background-color: #ffffff !important; color: #1e293b !important; }
         div[data-baseweb="popover"] li { color: #1e293b !important; background-color: #ffffff !important; }
+        
+        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
+        
+        /* የቲክ ማድረጊያ ሳጥን ማጉያ */
         div[data-testid="stCheckbox"] {
             background-color: #f0fdf4 !important; padding: 14px 24px !important; border-radius: 12px !important;
             border: 2px solid #22c55e !important; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
@@ -33,12 +50,24 @@ st.markdown("""
         input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
+
+        /* ደማቅ አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ */
         div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
             background-color: #16a34a !important; color: white !important; border-radius: 12px !important;
             border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 20px !important;
         }
-        div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
-        div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
+        
+        /* ❌ ቀይ በተን - ለአጥፊው በተን */
+        div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] {
+            background-color: #dc2626 !important; color: white !important; border-radius: 12px !important;
+            border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 18px !important;
+        }
+
+        /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
+        div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) {
+            background-color: #2563eb !important; color: white !important; border-radius: 12px !important;
+            border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 18px !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -142,7 +171,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
-    st.subheader("🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
@@ -160,17 +189,3 @@ elif page == "📊 Admin Only":
         with tab2:
             orders_df = load_orders()
             if not orders_df.empty:
-                st.dataframe(orders_df, use_container_width=True)
-                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                
-                # 🚀 ፍጹም አስተማማኝ አቀማመጥ፦ አድሚን ገፅ ላይ ምንም 'columns' የለም፣ በተኖቹ በተራ ይወጣሉ
-                done_clicked = st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
-                if done_clicked:
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
-                    
-                del_clicked = st.button("❌ ጥያቄውን ከነጭራሹ አጥፋ", key=f"delorder_{order_to_update}")
-                if del_clicked:
-                    delete_order(order_to_update)
-                    st.rerun()
-            else: st.info("እስካሁን ምንም ጥያቄ አልመጣም።")
