@@ -168,10 +168,9 @@ elif page == "📊 Admin Only":
             if not orders_df.empty:
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                btn_c1, btn_c2 = st.columns(2)
-                with btn_c1:
-                    done_click = st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
-                    if done_click:
-                        update_order_status(order_to_update, "ተጠናቋል")
-                        st.rerun()
-                with btn_c2:
+                
+                # 🚀 የክፍተት ችግር ሙሉ በሙሉ እዚህ ጋር ተስተካክሏል (ያለ with btn_c2)
+                done_clicked = st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}")
+                if done_clicked:
+                    update_order_status(order_to_update, "ተጠናቋል")
+                    st.rerun()
