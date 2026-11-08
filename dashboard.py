@@ -37,8 +37,8 @@ st.markdown("""
             background-color: #16a34a !important; color: white !important; border-radius: 12px !important;
             border: none !important; padding: 14px 32px !important; font-weight: 800 !important; font-size: 20px !important;
         }
-        div.stButton > button[key^="del_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
-        div.stButton > button:not([key^="del_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
+        div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
+        div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -75,6 +75,14 @@ def delete_applicant(applicant_id):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM applicants WHERE id = ?', (applicant_id,))
+    conn.commit()
+    conn.close()
+
+# የቅጥር ጥያቄን ከዳታቤዝ ለማጥፋት የተጨመረ አዲስ ፈንክሽን
+def delete_order(order_id):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM orders WHERE id = ?', (order_id,))
     conn.commit()
     conn.close()
 
@@ -155,11 +163,16 @@ elif page == "📊 Admin Only":
                             delete_applicant(row['id'])
                             st.rerun()
                     st.markdown('</div>', unsafe_allow_html=True)
+            else:
+                st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
         with tab2:
             orders_df = load_orders()
             if not orders_df.empty:
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
-                    update_order_status(order_to_update, "ተጠናቋል")
-                    st.rerun()
+                
+                # ጎን ለጎን የሚቀመጡ የድርጊት በተኖች
+                admin_btn_col1, admin_col_space, admin_btn_col2 = st.columns([2, 1, 2])
+                with admin_btn_col1:
+                    if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
+                        update_order_status(order_to_update, "ተጠናቋል")
