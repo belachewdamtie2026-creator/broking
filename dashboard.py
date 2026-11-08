@@ -4,66 +4,7 @@ import pandas as pd
 from PIL import Image
 import io
 
-# የገፅ ቅንጅት እና እጅግ ማራኪ ባለቀለም CSS ዲዛይን
-st.set_page_config(page_title="ፈጣን ድለላ - ባህር ዳር", layout="wide")
-
-st.markdown("""
-    <style>
-        /* ጠቅላላ የበስተጀርባ ቀለም - ማራኪ ግራዲየንት */
-        .stApp {
-            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
-        }
-        
-        /* የዋናው ርዕስ ውበት */
-        .main-title {
-            font-size: 42px !important;
-            font-weight: 900 !important;
-            color: #1e3a8a !important;
-            text-align: center;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 5px;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
-        .sub-title {
-            font-size: 20px !important;
-            color: #475569 !important;
-            font-weight: 500 !important;
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        
-        /* አዲስ ባለቀለም የሰራተኞች ካርድ */
-        .worker-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-            border-radius: 20px;
-            padding: 26px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border-left: 6px solid #3b82f6;
-            margin-bottom: 30px;
-            transition: all 0.3s ease;
-        }
-        .worker-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border-left-color: #0d9488;
-        }
-        
-        /* የፎቶዎች ውበት */
-        .stImage > img {
-            border-radius: 15px !important;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
-        }
-        
-        /* ፎርሞች እና ሳጥኖች */
-        .stForm {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-            border-radius: 20px !important;
-            padding: 35px !important;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
-            border: 1px solid #cbd5e1 !important;
-        }
-    </style>
-""", unsafe_allow_html=True)
+st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
 # የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
@@ -120,30 +61,27 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# የጎን ምናሌ (Sidebar)
+# የጎን ምናሌ (Menu)
 page = st.sidebar.radio("ምናሌ (Menu)", [
     "📝 የሰራተኛ መመዝገቢያ", 
     "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", 
     "📊 Admin Only"
 ])
 
-# ማራኪ ዋና አርዕስት
-st.markdown('<div class="main-title">💼 ፈጣን ድለላ</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">የባህር ዳር ዘመናዊ የሰራተኛ እና ቀጣሪ ማገናኛ መድረክ</div>', unsafe_allow_html=True)
-
 # ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
 if page == "📝 የሰራተኛ መመዝገቢያ":
-    st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>የሰራተኛ መመዝገቢያ ቅፅ</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#475569; margin-bottom:20px;'>መረጃዎን በትክክል በመሙላት በፍጥነት ስራ ያግኙ</p>", unsafe_allow_html=True)
+    st.title("የሰራተኛ መመዝገቢያ")
+    st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
+    st.markdown("---")
     
     with st.form("registration_form", clear_on_submit=True):
         name = st.text_input("ሙሉ ስም")
         phone = st.text_input("ስልክ ቁጥር:")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
-        experience = st.text_input("የስራ ልምድ (ምሳሌ፦ 2 አመት በሆቴል):")
+        experience = st.text_input("የስራ ልምድ:")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
         
-        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
+        submit_button = st.form_submit_button("(ይመዝገቡ)")
         
         if submit_button:
             if name and phone and uploaded_file:
@@ -154,48 +92,44 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
                                (name, phone, job_type, experience, photo_bytes))
                 conn.commit()
                 conn.close()
-                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እንገናኛለን።")
+                st.success("🎉 ማመልከቻዎ እና ፎቶዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን።")
             else:
-                st.error("እባክዎ ሁሉንም መረጃዎች እና ፎቶዎን በትክክል ያስገቡ!")
+                st.error("እባክዎ ሁሉንም በትክክል ያስገቡ!")
 
 # ----- ገፅ 2፦ ዝግጁ የሆኑ ሰራተኞች ዝርዝር -----
 elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
-    st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>በስራ ዝግጁ የሆኑ ሰራተኞች</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#475569; margin-bottom:20px;'>የሚፈልጉትን ሰራተኛ በሙያ መርጠው የቅጥር ጥያቄ መላክ ይችላሉ</p>", unsafe_allow_html=True)
+    st.title("ዝግጁ የሆኑ ሰራተኞች ዝርዝር")
+    st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
+    st.markdown("---")
     
     df = load_data()
     
     if not df.empty:
-        job_filter = st.selectbox("የስራ አይነት በመምረጥ ያጣሩ፦", ["ሁሉም"] + list(df["job_type"].unique()))
+        job_filter = st.selectbox("የሚፈልጉትን የስራ አይነት ይምረጡ:", ["ሁሉም"] + list(df["job_type"].unique()))
         filtered_df = df if job_filter == "ሁሉም" else df[df["job_type"] == job_filter]
         
-        st.markdown("---")
-        
         for index, row in filtered_df.iterrows():
-            st.markdown('<div class="worker-card">', unsafe_allow_html=True)
             col1, col2 = st.columns(2)
             
             with col1:
                 if row['photo']:
-                    st.image(Image.open(io.BytesIO(row['photo'])), width=160, caption=f"ኮድ፡ BDR-{row['id']}")
+                    image = Image.open(io.BytesIO(row['photo']))
+                    st.image(image, width=150, caption=f"ኮድ፡ BDR-{row['id']}")
                 else:
-                    st.image("https://placeholder.com", width=160, caption="ፎቶ የለም")
+                    st.image("https://placeholder.com", width=150, caption="ፎቶ የለም")
                     
             with col2:
-                badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
-                
-                st.markdown(f"<h2 style='color:#1e3a8a; margin-top:0;'>ስም: {row['name']}</h2>", unsafe_allow_html=True)
-                st.markdown(f"<p style='font-size:18px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:6px 14px; border-radius:30px; font-weight:700; font-size:14px;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
-                st.markdown(f"<p style='font-size:17px; color:#334155;'>📜 <b>የስራ ልምድ:</b> {row['experience']}</p>", unsafe_allow_html=True)
+                st.subheader(f"ስም: {row['name']}")
+                st.write(f"💼 **የስራ ዘርፍ:** {row['job_type']}")
+                st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
                 
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ (ኮድ: BDR-{row['id']})", key=f"check_{row['id']}")
                 
                 if show_form:
-                    st.markdown("<br>", unsafe_allow_html=True)
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም (የቀጣሪው ስም):", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ ቁጥር (ለመገናኘት):", key=f"emp_phone_{row['id']}")
-                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን በቅጽበት ላክ 📩")
+                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን ላክ")
                         
                         if submit_order:
                             if emp_name and emp_phone:
@@ -207,30 +141,65 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                                 ''', (emp_name, emp_phone, row['id'], row['name']))
                                 conn.commit()
                                 conn.close()
-                                st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በአጭር ጊዜ ውስጥ በስልክ እንገናኛለን።")
+                                st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳዉቅዎታለን።")
                             else:
-                                st.error("እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!")
-            st.markdown('</div>', unsafe_allow_html=True)
+                                st.error("እባክዎ ስምዎትንና ስልክ ቁጥርዎን ያስገቡ!")
+            st.markdown("---")
     else:
         st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
 
 # ----- ገፅ 3፦ Admin Only -----
 elif page == "📊 Admin Only":
-    st.markdown("<h3 style='color:#1e3a8a; font-weight:700;'>🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
+    st.title("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+    st.markdown("---")
     
-    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
+    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password")
     
     if password == "bdr123":
-        admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
+        tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
         
-        with admin_sub_tab1:
+        with tab1:
             st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
-            df_admin = load_data()
-            if not df_admin.empty:
-                for idx, r in df_admin.iterrows():
-                    st.markdown('<div class="worker-card">', unsafe_allow_html=True)
-                    a_col1, a_col2, a_col3 = st.columns(3)
-                    with a_col1:
-                        if r['photo']:
-                            st.image(Image.open(io.BytesIO(r['photo'])), width=90)
-                         else:
+            df = load_data()
+            if not df.empty:
+                for index, row in df.iterrows():
+                    admin_col1, admin_col2, admin_col3 = st.columns(3)
+                    
+                    with admin_col1:
+                        if row['photo']:
+                            img = Image.open(io.BytesIO(row['photo']))
+                            st.image(img, width=80)
+                        else:
+                            st.write("❌ ፎቶ የለም")
+                            
+                    with admin_col2:
+                        st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}")
+                        st.markdown(f"📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']} | 📜 **ልምድ:** {row['experience']}")
+                        
+                    with admin_col3:
+                        if st.button(f"❌ አጥፋ", key=f"del_{row['id']}"):
+                            delete_applicant(row['id'])
+                            st.success(f"ሰራተኛ ቁጥር BDR-{row['id']} ከዝርዝር ጠፍቷል!")
+                            st.rerun()
+                            
+                    st.markdown("---")
+            else:
+                st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
+                
+        with tab2:
+            st.subheader("📥 ከቀጣሪዎች የመጡ የቅጥር ጥያቄዎች ዝርዝር")
+            orders_df = load_orders()
+            if not orders_df.empty:
+                st.dataframe(orders_df[["id", "employer_name", "employer_phone", "applicant_id", "applicant_name", "status"]], use_container_width=True)
+                
+                st.markdown("### የጥያቄ ሁኔታ ማዘመኛ")
+                order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
+                if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
+                    update_order_status(order_to_update, "ተጠናቋል")
+                    st.success(f"የጥያቄ ቁጥር {order_to_update} ሁኔታ በተሳካ ሁኔታ ታድሷል!")
+                    st.rerun()
+            else:
+                st.info("እስካሁን ምንም ጥያቄ አልመጣም።")
+                
+    elif password != "":
+        st.error("מיስጥራዊ ቁጥር የተሳሳተ ነው!")
