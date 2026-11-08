@@ -10,6 +10,8 @@ st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", l
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
+        [data-testid="stHeader"] { background-color: #ffffff !important; }
+        [data-testid="stHeader"] *, [data-testid="stHeader"] svg { color: #1e293b !important; fill: #1e293b !important; }
         html, body, [data-testid="stWidgetLabel"] p, .stMarkdown p, p, li, span {
             font-size: 19px !important; font-weight: 500 !important; color: #1e293b !important;
         }
@@ -95,9 +97,10 @@ def delete_order(order_id):
     conn.commit()
     conn.close()
 
-page = st.sidebar.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"])
-
 st.title("💼 ፈጣን ድለላ")
+
+# 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
+page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
 
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
