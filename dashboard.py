@@ -233,4 +233,4 @@ elif page == "📊 Admin Only":
                     with a_col1:
                         if r['photo']:
                             st.image(Image.open(io.BytesIO(r['photo'])), width=90)
-                        else:
+                         else:
