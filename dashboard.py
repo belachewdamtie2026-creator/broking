@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
+# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
@@ -78,7 +78,6 @@ def delete_applicant(applicant_id):
     conn.commit()
     conn.close()
 
-# የቅጥር ጥያቄን ከዳታቤዝ ለማጥፋት የተጨመረ አዲስ ፈንክሽን
 def delete_order(order_id):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -163,16 +162,16 @@ elif page == "📊 Admin Only":
                             delete_applicant(row['id'])
                             st.rerun()
                     st.markdown('</div>', unsafe_allow_html=True)
-            else:
-                st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
+            else: st.info("እስካሁን ምንም ሰራተኛ አልተመዘገበም።")
         with tab2:
             orders_df = load_orders()
             if not orders_df.empty:
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
-                
-                # ጎን ለጎን የሚቀመጡ የድርጊት በተኖች
-                admin_btn_col1, admin_col_space, admin_btn_col2 = st.columns([2, 1, 2])
-                with admin_btn_col1:
-                    if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
+                btn_c1, btn_c2 = st.columns(2)
+                with btn_c1:
+                    if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ", key=f"done_{order_to_update}"):
                         update_order_status(order_to_update, "ተጠናቋል")
+                        st.rerun()
+                with btn_c2:
+                    if st.button("❌ ጥያቄውን ከነጭራሹ አጥፋ", key=f"delorder_{order_to_update}"):
