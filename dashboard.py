@@ -6,16 +6,21 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የቲክ ማድረጊያ ሳጥኗን (Checkbox) እና በተኖቹን በደማቅ ቀለም ለማሸብረቅ የተጨመረ CSS ዲዛይን
+# 🎨 በተኖቹን እና ቼክቦክሱን በደማቅ ቀለማት ለማሸብረቅ የተስተካከለ CSS ዲዛይን
 st.markdown("""
     <style>
+        /* ጠቅላላ የበስተጀርባ ቀለም */
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
+        
+        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
             border-radius: 20px; padding: 26px;
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
             border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
+        
+        /* 🚀 የቲክ ማድረጊያ ሳጥን (Checkbox) ማጉያ */
         div[data-testid="stCheckbox"] {
             background-color: #f0fdf4 !important; padding: 12px 20px !important;
             border-radius: 12px !important; border: 2px solid #22c55e !important;
@@ -23,8 +28,53 @@ st.markdown("""
             margin: 15px 0 !important; width: fit-content !important;
         }
         div[data-testid="stCheckbox"] label p { font-size: 18px !important; font-weight: 800 !important; color: #15803d !important; }
+        
+        /* የሰራተኛ መመዝገቢያ ፎርም ውበት */
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
+
+        /* 🚀 ደማቅ አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ (ሙሉ በሙሉ እዚህ ተስተካክሏል) */
+        div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
+            background-color: #16a34a !important;
+            color: white !important;
+            border-radius: 12px !important;
+            border: none !important;
+            padding: 12px 28px !important;
+            font-weight: 800 !important;
+            font-size: 18px !important;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3) !important;
+            transition: all 0.3s ease !important;
+            width: fit-content !important;
+        }
+        div.stFormSubmitButton > button:hover {
+            background-color: #15803d !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 14px rgba(22, 163, 74, 0.4) !important;
+        }
+
+        /* ❌ ቀይ በተን - ለአጥፊው በተን */
+        div.stButton > button[key^="del_"] {
+            background-color: #dc2626 !important;
+            color: white !important;
+            border-radius: 10px !important;
+            border: none !important;
+            padding: 6px 16px !important;
+            font-weight: bold !important;
+        }
+        div.stButton > button[key^="del_"]:hover {
+            background-color: #b91c1c !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
+        div.stButton > button:not([key^="del_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) {
+            background-color: #2563eb !important;
+            color: white !important;
+            border-radius: 10px !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            font-weight: bold !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -124,7 +174,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
-    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+    st.subheader("🔒  የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
