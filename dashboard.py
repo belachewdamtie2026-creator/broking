@@ -6,96 +6,25 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የቲክ ማድረጊያ ሳጥኗን (Checkbox) በደማቅ አረንጓዴ እና በትላልቅ ፊደላት ለማጉላት የተጨመረ CSS ዲዛይን
+# 🎨 የቲክ ማድረጊያ ሳጥኗን (Checkbox) እና በተኖቹን በደማቅ ቀለም ለማሸብረቅ የተጨመረ CSS ዲዛይን
 st.markdown("""
     <style>
-        /* ጠቅላላ የበስተጀርባ ቀለም */
-        .stApp {
-            background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%);
-        }
-        
-        /* የሰራተኞች ካርድ ውበት */
+        .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
-            border-radius: 20px;
-            padding: 26px;
+            border-radius: 20px; padding: 26px;
             box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.05);
-            border-left: 6px solid #3b82f6;
-            margin-bottom: 30px;
+            border-left: 6px solid #3b82f6; margin-bottom: 30px;
         }
-        
-        /* 🚀 ይህንን ሰራተኛ መቅጠር እፈልጋለሁ የምትለውን ሳጥን እና ፅሁፍ ማጉያ */
         div[data-testid="stCheckbox"] {
-            background-color: #f0fdf4 !important;
-            padding: 12px 20px !important;
-            border-radius: 12px !important;
-            border: 2px solid #22c55e !important;
+            background-color: #f0fdf4 !important; padding: 12px 20px !important;
+            border-radius: 12px !important; border: 2px solid #22c55e !important;
             box-shadow: 0 4px 6px rgba(34, 197, 94, 0.15) !important;
-            margin-top: 15px !important;
-            margin-bottom: 15px !important;
-            width: fit-content !important;
+            margin: 15px 0 !important; width: fit-content !important;
         }
-        div[data-testid="stCheckbox"] label p {
-            font-size: 18px !important;
-            font-weight: 800 !important;
-            color: #15803d !important;
-        }
-        
-        /* የሰራተኛ መመዝገቢያ ፎርም ውበት */
-        .stForm {
-            background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%) !important;
-            border-radius: 20px !important;
-            padding: 35px !important;
-            border: 2px solid #eab308 !important;
-            box-shadow: 0 10px 20px rgba(234, 179, 8, 0.1) !important;
-        }
-        
-        /* የፎቶዎች ውበት */
-        .stImage > img {
-            border-radius: 15px !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
-        }
-
-        /* አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ */
-        div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
-            background-color: #16a34a !important;
-            color: white !important;
-            border-radius: 12px !important;
-            border: none !important;
-            padding: 10px 24px !important;
-            font-weight: bold !important;
-            font-size: 16px !important;
-            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2) !important;
-            transition: all 0.3s ease !important;
-        }
-        div.stFormSubmitButton > button:hover {
-            background-color: #15803d !important;
-            transform: translateY(-2px) !important;
-        }
-
-        /* ❌ ቀይ በተን - ለአጥፊው በተን */
-        div.stButton > button[key^="del_"] {
-            background-color: #dc2626 !important;
-            color: white !important;
-            border-radius: 10px !important;
-            border: none !important;
-            padding: 6px 16px !important;
-            font-weight: bold !important;
-        }
-        div.stButton > button[key^="del_"]:hover {
-            background-color: #b91c1c !important;
-            transform: translateY(-2px) !important;
-        }
-
-        /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
-        div.stButton > button:not([key^="del_"]):not([key^="submit_"]) {
-            background-color: #2563eb !important;
-            color: white !important;
-            border-radius: 10px !important;
-            border: none !important;
-            padding: 8px 20px !important;
-            font-weight: bold !important;
-        }
+        div[data-testid="stCheckbox"] label p { font-size: 18px !important; font-weight: 800 !important; color: #15803d !important; }
+        .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
+        .stImage > img { border-radius: 15px !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -185,7 +114,6 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
                         submit_order = st.form_submit_button("የቅጥር ጥያቄውን በቅጽበት ላክ 📩")
-                        
                         if submit_order and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
@@ -222,3 +150,5 @@ elif page == "📊 Admin Only":
                 st.dataframe(orders_df, use_container_width=True)
                 order_to_update = st.selectbox("የቅጥር ጥያቄ መለያ (ID) ይምረጡ፦", options=orders_df["id"].tolist())
                 if st.button("ጥያቄውን እንደ 'ተጠናቋል' መዝግብ"):
+                    update_order_status(order_to_update, "ተጠናቋል")
+                    st.rerun()
