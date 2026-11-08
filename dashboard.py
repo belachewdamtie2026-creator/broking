@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የድረ-ገጹን መዋቅር ሳይነካ በተለያየ ደማቅ ቀለም (ቀይ፣ ቢጫ፣ ሰማያዊ) ያሸበረቀ CSS ዲዛይን
+# 🎨 በተኖቹን በደማቅ ቀለማት (አረንጓዴ፣ ቀይ፣ ሰማያዊ) ለማሸብረቅ የተጨመረ CSS ዲዛይን
 st.markdown("""
     <style>
         /* ጠቅላላ የበስተጀርባ ቀለም */
@@ -14,7 +14,7 @@ st.markdown("""
             background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%);
         }
         
-        /* የሰራተኞች ካርድ ውበት - በደማቅ ቀይ መስመር የተከበበ እና ማራኪ ባለቀለም ጀርባ */
+        /* የሰራተኞች ካርድ ውበት */
         .worker-card {
             background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
             border-radius: 20px;
@@ -25,7 +25,7 @@ st.markdown("""
             margin-bottom: 30px;
         }
         
-        /* የሰራተኛ መመዝገቢያ ፎርም ውበት - በደማቅ ቢጫ የተሸለመ */
+        /* የሰራተኛ መመዝገቢያ ፎርም ውበት */
         .stForm {
             background: linear-gradient(135deg, #ffffff 0%, #fefce8 100%) !important;
             border-radius: 20px !important;
@@ -38,6 +38,56 @@ st.markdown("""
         .stImage > img {
             border-radius: 15px !important;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+        }
+
+        /* 🚀 አረንጓዴ በተኖች - ለመመዝገቢያ እና ለቅጥር ጥያቄ መላኪያ */
+        div.stFormSubmitButton > button, div.stButton > button[key^="submit_"] {
+            background-color: #16a34a !important;
+            color: white !important;
+            border-radius: 12px !important;
+            border: none !important;
+            padding: 10px 24px !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+            box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+        div.stFormSubmitButton > button:hover {
+            background-color: #15803d !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 12px rgba(22, 163, 74, 0.3) !important;
+        }
+
+        /* ❌ ቀይ በተን - ለአጥፊው በተን */
+        div.stButton > button[key^="del_"] {
+            background-color: #dc2626 !important;
+            color: white !important;
+            border-radius: 10px !important;
+            border: none !important;
+            padding: 6px 16px !important;
+            font-weight: bold !important;
+            box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+        div.stButton > button[key^="del_"]:hover {
+            background-color: #b91c1c !important;
+            transform: translateY(-2px) !important;
+        }
+
+        /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
+        div.stButton > button:not([key^="del_"]):not([key^="submit_"]) {
+            background-color: #2563eb !important;
+            color: white !important;
+            border-radius: 10px !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            font-weight: bold !important;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+        div.stButton > button:not([key^="del_"]):not([key^="submit_"]):hover {
+            background-color: #1d4ed8 !important;
+            transform: translateY(-2px) !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -127,7 +177,9 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
-                        if st.form_submit_button("የቅጥር ጥያቄውን ላክ 📩") and emp_name and emp_phone:
+                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን በቅጽበት ላክ 📩")
+                        
+                        if submit_order and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
                             cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
