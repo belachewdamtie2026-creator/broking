@@ -4,30 +4,32 @@ import pandas as pd
 from PIL import Image
 import io
 
-# የገፅ ቅንጅት እና ለዓይን ማራኪ እንዲሆን የተደረገ የ CSS ዲዛይን
+# የገፅ ቅንጅት እና እጅግ ማራኪ ባለቀለም CSS ዲዛይን
 st.set_page_config(page_title="ፈጣን ድለላ - ባህር ዳር", layout="wide")
 
 st.markdown("""
     <style>
-        /* ጠቅላላ የበስተጀርባ ቀለም */
+        /* ጠቅላላ የበስተጀርባ ቀለም - ማራኪ ግራዲየንት */
         .stApp {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
         }
         
         /* የዋናው ርዕስ ውበት */
         .main-title {
-            font-size: 38px !important;
-            font-weight: 800 !important;
-            color: #1E3A8A !important;
+            font-size: 42px !important;
+            font-weight: 900 !important;
+            color: #1e3a8a !important;
             text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 5px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
         }
         .sub-title {
-            font-size: 18px !important;
-            color: #6B7280 !important;
+            font-size: 20px !important;
+            color: #475569 !important;
+            font-weight: 500 !important;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
         
         /* ከላይ ያሉ ታቦች (Tabs) ውበት */
@@ -36,48 +38,55 @@ st.markdown("""
             justify-content: center;
         }
         .stTabs [data-baseweb="tab"] {
-            background-color: #ffffff;
-            border: 1px solid #E5E7EB;
-            padding: 12px 24px !important;
-            border-radius: 30px !important;
-            font-weight: 600 !important;
-            color: #4B5563 !important;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+            background-color: #3b82f6;
+            padding: 14px 28px !important;
+            border-radius: 50px !important;
+            font-weight: 700 !important;
+            color: #ffffff !important;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none !important;
         }
         .stTabs [data-baseweb="tab"]:hover {
-            color: #1E3A8A !important;
-            border-color: #1E3A8A;
-            background-color: #EFF6FF;
+            background-color: #1d4ed8;
+            color: #ffffff !important;
+            transform: scale(1.05);
         }
         .stTabs [aria-selected="true"] {
-            background-color: #1E3A8A !important;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%) !important;
             color: #ffffff !important;
-            border-color: #1E3A8A !important;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2) !important;
         }
         
-        /* የሰራተኞች ካርድ (Card Design) ውበት */
+        /* አዲስ ባለቀለም የሰራተኞች ካርድ (Vibrant Card Design) */
         .worker-card {
-            background-color: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid #F3F4F6;
-            margin-bottom: 25px;
-            transition: transform 0.2s ease;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-left: 6px solid #3b82f6;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
         }
         .worker-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-left-color: #0d9488;
+        }
+        
+        /* የፎቶዎች ውበት */
+        .stImage > img {
+            border-radius: 15px !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
         }
         
         /* ፎርሞች እና ሳጥኖች */
         .stForm {
-            background-color: #ffffff !important;
-            border-radius: 16px !important;
-            padding: 30px !important;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-            border: 1px solid #E5E7EB !important;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+            border-radius: 20px !important;
+            padding: 35px !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05) !important;
+            border: 1px solid #cbd5e1 !important;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -147,10 +156,10 @@ main_tab1, main_tab2, main_tab3 = st.tabs([
     "📊 Admin Only"
 ])
 
-# ----- ጌፅ 1፦ የሰራተኛ መመዝገቢያ -----
+# ----- ገፅ 1፦ የሰራተኛ መመዝገቢያ -----
 with main_tab1:
-    st.markdown("<h3 style='color:#1E3A8A; font-weight:600;'>የሰራተኛ መመዝገቢያ ቅፅ</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#6B7280;'>መረጃዎን በትክክል በመሙላት በፍጥነት ስራ ያግኙ</p>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>የሰራተኛ መመዝገቢያ ቅፅ</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569; margin-bottom:20px;'>መረጃዎን በትክክል በመሙላት በፍጥነት ስራ ያግኙ</p>", unsafe_allow_html=True)
     
     with st.form("registration_form", clear_on_submit=True):
         name = st.text_input("ሙሉ ስም")
@@ -176,8 +185,8 @@ with main_tab1:
 
 # ----- ገፅ 2፦ ዝግጁ የሆኑ ሰራተኞች ዝርዝር -----
 with main_tab2:
-    st.markdown("<h3 style='color:#1E3A8A; font-weight:600;'>በስራ ዝግጁ የሆኑ ሰራተኞች</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='color:#6B7280;'>የሚፈልጉትን ሰራተኛ በሙያ መርጠው የቅጥር ጥያቄ መላክ ይችላሉ</p>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#1e3a8a; font-weight:700; margin-bottom:5px;'>በስራ ዝግጁ የሆኑ ሰራተኞች</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#475569; margin-bottom:20px;'>የሚፈልጉትን ሰራተኛ በሙያ መርጠው የቅጥር ጥያቄ መላክ ይችላሉ</p>", unsafe_allow_html=True)
     
     df = load_data()
     
@@ -199,9 +208,12 @@ with main_tab2:
                     st.image("https://placeholder.com", width=160, caption="ፎቶ የለም")
                     
             with col2:
-                st.markdown(f"<h3 style='color:#1E3A8A; margin-top:0;'>ስም: {row['name']}</h3>", unsafe_allow_html=True)
-                st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:#EFF6FF; color:#1E3A8A; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
-                st.markdown(f"<p style='font-size:16px; color:#4B5563;'>📜 <b>የስራ ልምድ:</b> {row['experience']}</p>", unsafe_allow_html=True)
+                # እንደየስራ ዘርፉ የተለያየ የባጅ ቀለም መስጠት
+                badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
+                
+                st.markdown(f"<h2 style='color:#1e3a8a; margin-top:0;'>ስም: {row['name']}</h2>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size:18px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:6px 14px; border-radius:30px; font-weight:700; font-size:14px;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
+                st.markdown(f"<p style='font-size:17px; color:#334155;'>📜 <b>የስራ ልምድ:</b> {row['experience']}</p>", unsafe_allow_html=True)
                 
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ (ኮድ: BDR-{row['id']})", key=f"check_{row['id']}")
                 
@@ -227,22 +239,3 @@ with main_tab2:
                                 st.error("እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!")
             st.markdown('</div>', unsafe_allow_html=True)
     else:
-        st.info("ለጊዜው የተመዘገበ ሰራተኛ የለም።")
-
-# ----- ገፅ 3፦ Admin Only -----
-with main_tab3:
-    st.markdown("<h3 style='color:#1E3A8A; font-weight:600;'>🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ</h3>", unsafe_allow_html=True)
-    
-    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
-    
-    if password == "bdr123":
-        admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
-        
-        with admin_sub_tab1:
-            st.subheader("የተመዘገቡ ሰራተኞች ሙሉ መረጃ እና ፎቶ")
-            df = load_data()
-            if not df.empty:
-                # 🚀 የክፍተት (Indentation) ስህተት ሙሉ በሙሉ እዚህ ጋር ተስተካክሏል
-                for index, row in df.iterrows():
-                    admin_col1, admin_col2, admin_col3 = st.columns(3)
-                    
