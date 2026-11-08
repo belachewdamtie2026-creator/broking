@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 የፅሁፍ መጠኖችን (Font Sizes) በሙሉ ከፍ እና ደመቅ ለማድረግ የተሻሻለ CSS ዲዛይን
+# 🎨 የፅሁፍ መጠኖችን ለማሳደግ እና ስልክ ላይ ያሉ ጥቁር ሳጥኖችን (Dropdowns) ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS
 st.markdown("""
     <style>
         /* ጠቅላላ የበስተጀርባ ቀለም */
@@ -23,6 +23,24 @@ st.markdown("""
         h1 { font-size: 46px !important; font-weight: 900 !important; color: #1e3a8a !important; }
         h2 { font-size: 32px !important; font-weight: 800 !important; color: #1e3a8a !important; }
         h3 { font-size: 26px !important; font-weight: 700 !important; color: #1e3a8a !important; }
+        
+        /* 📱 ስልክ ላይ ጥቁር የሆኑትን መምረጫ ሳጥኖች (Dropdown/Selectbox) ሁልጊዜ ነጭ እና ግልጽ የማድረጊያ ማሻሻያ */
+        div[data-baseweb="select"] > div {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        div[data-baseweb="popover"] ul {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+        }
+        div[data-baseweb="popover"] li {
+            color: #1e293b !important;
+            background-color: #ffffff !important;
+        }
+        div[data-baseweb="popover"] li:hover {
+            background-color: #f1f5f9 !important;
+        }
         
         /* የሰራተኞች ካርድ ውበት */
         .worker-card {
@@ -42,9 +60,7 @@ st.markdown("""
         div[data-testid="stCheckbox"] label p { font-size: 21px !important; font-weight: 800 !important; color: #15803d !important; }
         
         /* የፎርም መሙያ ሳጥኖች ውስጥ ያሉ ፅሁፎችን ማሳደጊያ */
-        input, select, textarea {
-            font-size: 18px !important;
-        }
+        input, select, textarea { font-size: 18px !important; color: #1e293b !important; background-color: #ffffff !important; }
         
         .stForm { background: #ffffff !important; border-radius: 20px !important; padding: 35px !important; border: 1px solid #cbd5e1 !important; }
         .stImage > img { border-radius: 15px !important; }
@@ -62,11 +78,7 @@ st.markdown("""
             transition: all 0.3s ease !important;
             width: fit-content !important;
         }
-        div.stFormSubmitButton > button:hover {
-            background-color: #15803d !important;
-            transform: translateY(-2px) !important;
-        }
-
+        
         /* ❌ ቀይ በተን - ለአጥፊው በተን */
         div.stButton > button[key^="del_"] {
             background-color: #dc2626 !important;
@@ -76,10 +88,6 @@ st.markdown("""
             padding: 8px 20px !important;
             font-weight: bold !important;
             font-size: 16px !important;
-        }
-        div.stButton > button[key^="del_"]:hover {
-            background-color: #b91c1c !important;
-            transform: translateY(-2px) !important;
         }
 
         /* 🔵 ሰማያዊ በተን - ለጥያቄ ማጠናቀቂያ */
@@ -203,10 +211,3 @@ elif page == "📊 Admin Only":
                     admin_col1, admin_col2, admin_col3 = st.columns(3)
                     with admin_col1:
                         if row['photo']:
-                            st.image(Image.open(io.BytesIO(row['photo'])), width=80)
-                    with admin_col2:
-                        st.markdown(f"**መለያ ቁጥር:** BDR-{row['id']} | **ስም:** {row['name']}\n\n📞 **ስልክ:** {row['phone']} | 💼 **ስራ:** {row['job_type']}")
-                    with admin_col3:
-                        if st.button(f"❌ አጥፋ", key=f"del_{row['id']}"):
-                            delete_applicant(row['id'])
-                            st.rerun()
