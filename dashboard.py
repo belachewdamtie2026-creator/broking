@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 import io
 
-st.set_page_config(page_title="ፈጣን ድለላ", layout="wide")
+st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
 # የዳታቤዝ መጀመሪያ ዝግጅት
 def init_db():
@@ -170,7 +170,7 @@ with main_tab3:
     st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     st.markdown("---")
     
-    password = st.text_input("Password ያስገቡ፦", type="password", key="admin_password_direct")
+    password = st.text_input("የአስተዳዳሪ ሚስጥራዊ ቁጥር (Password) ያስገቡ፦", type="password", key="admin_password_direct")
     
     if password == "bdr123":
         admin_sub_tab1, admin_sub_tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች (Orders)"])
@@ -180,7 +180,7 @@ with main_tab3:
             df = load_data()
             if not df.empty:
                 for index, row in df.iterrows():
-                    admin_col1, admin_col2, admin_col3 = st.columns()
+                    admin_col1, admin_col2, admin_col3 = st.columns(3) # እዚህ ጋር ቁጥር 3 ተጨምሯል (ስህተቱ የተፈታው እዚህ ነው!)
                     
                     with admin_col1:
                         if row['photo']:
