@@ -118,9 +118,17 @@ LABEL_NAME = "ሙሉ ስም"
 LABEL_PHONE = "ስልክ ቁጥር:"
 LABEL_EMP_NAME = "የእርስዎ ስም:"
 LABEL_EMP_PHONE = "የእርስዎ ስልክ:"
+LABEL_EXPERIENCE = "የስራ ልምድ (በአመት):"
 
 def name_has_digit(text):
     return any(ch in "0123456789" for ch in text)
+
+def format_experience(value):
+    # ቁጥር ብቻ ከሆነ "አመት" ይጨምራል፤ ቀድሞ በጽሁፍ የተመዘገበ ልምድ እንዳለ ይታያል
+    text = "" if value is None or (isinstance(value, float) and pd.isna(value)) else str(value).strip()
+    if not text:
+        return "—"
+    return f"{text} አመት" if text.isdigit() else text
 
 def phone_is_valid(text):
     # ቁጥሮች ብቻ (መጀመሪያ ላይ + ይፈቀዳል)፣ ከ 9 እስከ 13 አሃዝ
@@ -143,6 +151,9 @@ GUARD_JS = """
   function clean(kind, value) {
     if (kind === 'phone') {
       return value.replace(/[^0-9+]/g, '').replace(/(?!^)\\+/g, '');
+    }
+    if (kind === 'number') {
+      return value.replace(/[^0-9]/g, '');
     }
     return value.replace(/[0-9]/g, '');
   }
@@ -169,9 +180,11 @@ GUARD_JS = """
       let kind = null;
       if (CFG.names.indexOf(label) !== -1) kind = 'name';
       else if (CFG.phones.indexOf(label) !== -1) kind = 'phone';
+      else if (CFG.numbers.indexOf(label) !== -1) kind = 'number';
       if (!kind) return;
       el.dataset.guardToken = token;
       if (kind === 'phone') el.setAttribute('inputmode', 'tel');
+      if (kind === 'number') el.setAttribute('inputmode', 'numeric');
       guard(el, kind);
     });
   }
@@ -184,7 +197,7 @@ GUARD_JS = """
 
 def enable_input_guard():
     # ስም ሳጥን ውስጥ ቁጥር፣ ስልክ ሳጥን ውስጥ ፊደል ሲጻፍ ወዲያውኑ ያጠፋል
-    cfg = json.dumps({"names": [LABEL_NAME, LABEL_EMP_NAME], "phones": [LABEL_PHONE, LABEL_EMP_PHONE]}, ensure_ascii=False)
+    cfg = json.dumps({"names": [LABEL_NAME, LABEL_EMP_NAME], "phones": [LABEL_PHONE, LABEL_EMP_PHONE], "numbers": [LABEL_EXPERIENCE]}, ensure_ascii=False)
     html = GUARD_JS.replace("__CFG__", cfg).strip()
     try:
         if hasattr(st, "iframe"):          # አዲስ የ Streamlit ስሪቶች
@@ -210,7 +223,7 @@ if page == "የሰራተኛ መመዝገቢያ":
         name = st.text_input(LABEL_NAME, key=f"reg_name_{reg_n}")
         phone = st.text_input(LABEL_PHONE, max_chars=13, key=f"reg_phone_{reg_n}")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"], key=f"reg_job_{reg_n}")
-        experience = st.text_input("የስራ ልምድ:", key=f"reg_exp_{reg_n}")
+        experience = st.text_input(LABEL_EXPERIENCE, max_chars=2, key=f"reg_exp_{reg_n}")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"], key=f"reg_photo_{reg_n}")
         submit_button = st.form_submit_button("ይጫኑ")
         if submit_button:
@@ -221,11 +234,13 @@ if page == "የሰራተኛ መመዝገቢያ":
                 st.error("በስም ውስጥ ቁጥር መጻፍ አይቻልም።")
             elif not phone_is_valid(phone_clean):
                 st.error("ስልክ ቁጥር ቁጥሮችን ብቻ መያዝ አለበት (ለምሳሌ 0912345678)።")
+            elif experience.strip() and re.fullmatch(r"[0-9]{1,2}", experience.strip()) is None:
+                st.error("የስራ ልምድ ቁጥር ብቻ መሆን አለበት (በአመት፣ ለምሳሌ 3)።")
             else:
                 photo_bytes = uploaded_file.read()
                 conn = sqlite3.connect('database.db', check_same_thread=False)
                 cursor = conn.cursor()
-                cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name.strip(), phone_clean, job_type, experience, photo_bytes))
+                cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name.strip(), phone_clean, job_type, experience.strip(), photo_bytes))
                 conn.commit()
                 conn.close()
                 st.session_state["reg_n"] = reg_n + 1
@@ -250,7 +265,7 @@ elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                 badge_color = "#ea580c" if row['job_type'] in ("የቡና ባለሙያ", "የቡና አፍዪ") else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 st.subheader(f"ስም: {row['name']}")
                 st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
-                st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
+                st.write(f"📜 **የስራ ልምድ:** {format_experience(row['experience'])}")
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ", key=f"check_{row['id']}")
                 if show_form:
                     rid = int(row['id'])
