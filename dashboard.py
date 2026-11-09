@@ -6,7 +6,7 @@ import io
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
-# 🎨 📱 ስልክ ላይ ጥቁር የነበሩትን ፎርሞች፣ የፎቶ መጫኛ (File Uploader) እና መምረጫዎች ሁልጊዜ ነጭ ለማድረግ የተደረገ CSS ማሻሻያ
+##### CSS
 st.markdown("""
     <style>
         .stApp { background: linear-gradient(135deg, #fef08a 0%, #f1f5f9 100%); }
@@ -108,10 +108,10 @@ def delete_order(order_id):
     conn.commit()
     conn.close()
 
-st.title("💼 ፈጣን ድለላ")
+st.title("ፈጣን ድለላ")
 
-# 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
-page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
+###### menu
+page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
 
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
@@ -120,8 +120,8 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
         phone = st.text_input("ስልክ ቁጥር:")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
-        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
-        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
+        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"])
+        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ")
         if submit_button and name and phone and uploaded_file:
             photo_bytes = uploaded_file.read()
             conn = sqlite3.connect('database.db', check_same_thread=False)
@@ -129,9 +129,9 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
             cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name, phone, job_type, experience, photo_bytes))
             conn.commit()
             conn.close()
-            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል!")
+            st.success("ማመልከቻዎ ደርሶናል! በቅርቡ እናሳውቅወታለን")
 
-elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
+elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
     if not df.empty:
@@ -155,21 +155,21 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
-                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን በቅጽበት ላክ 📩")
+                        submit_order = st.form_submit_button("ላክ")
                         if submit_order and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
                             cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
                             conn.commit()
                             conn.close()
-                            st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል!")
+                            st.success("ጥያቄዎ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
             st.markdown('</div>', unsafe_allow_html=True)
 
-elif page == "📊 Admin Only":
-    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
+elif page == "Admin Only":
+    st.subheader("የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "123":
-        tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
+        tab1, tab2 = st.tabs(["የተመዘገቡ ሰራተኞች", "የመጡ የቅጥር ጥያቄዎች"])
         with tab1:
             df_admin = load_data()
             if not df_admin.empty:
@@ -190,12 +190,12 @@ elif page == "📊 Admin Only":
                     st.markdown('<div class="worker-card">', unsafe_allow_html=True)
                     st.markdown(f"**ጥያቄ #{order_id}** | 🏢 **ቀጣሪ:** {row['employer_name']} | 📞 **ስልክ:** {row['employer_phone']}")
                     st.markdown(f"👤 **የተጠየቀው ሰራተኛ:** {row['applicant_name']} (BDR-{row['applicant_id']})")
-                    st.markdown(f"📌 **አሁን ያለበት ሁኔታ:** {row['status']}")
+                    st.markdown(f"**አሁን ያለበት ሁኔታ:** {row['status']}")
                     current_status = row['status'] if row['status'] in status_options else status_options[0]
                     new_status = st.selectbox("ሁኔታ ቀይር:", status_options, index=status_options.index(current_status), key=f"status_{order_id}")
                     col_save, col_del = st.columns(2)
                     with col_save:
-                        if st.button("💾 ሁኔታውን አስቀምጥ", key=f"save_{order_id}"):
+                        if st.button("ሁኔታውን አስቀምጥ", key=f"save_{order_id}"):
                             update_order_status(order_id, new_status)
                             st.rerun()
                     with col_del:
