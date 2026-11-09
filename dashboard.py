@@ -3,6 +3,8 @@ import sqlite3
 import pandas as pd
 from PIL import Image
 import io
+import re
+import json
 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
 
@@ -111,28 +113,124 @@ def delete_order(order_id):
     conn.commit()
     conn.close()
 
+# ✍️ የመሙያ ሳጥኖች ስሞች (እዚህ ብቻ ይቀየራሉ፣ የመከልከያው ስክሪፕት ራሱ ይከተላቸዋል)
+LABEL_NAME = "ሙሉ ስም"
+LABEL_PHONE = "ስልክ ቁጥር:"
+LABEL_EMP_NAME = "የእርስዎ ስም:"
+LABEL_EMP_PHONE = "የእርስዎ ስልክ:"
+
+def name_has_digit(text):
+    return any(ch in "0123456789" for ch in text)
+
+def phone_is_valid(text):
+    # ቁጥሮች ብቻ (መጀመሪያ ላይ + ይፈቀዳል)፣ ከ 9 እስከ 13 አሃዝ
+    return re.fullmatch(r"\+?[0-9]{9,13}", text) is not None
+
+GUARD_JS = """
+<script>
+(function () {
+  const CFG = __CFG__;
+  const PWin = window.parent;
+  const pdoc = PWin.document;
+  const token = String(Math.random());
+
+  function setValue(el, value) {
+    const setter = Object.getOwnPropertyDescriptor(PWin.HTMLInputElement.prototype, 'value').set;
+    setter.call(el, value);
+    el.dispatchEvent(new PWin.Event('input', { bubbles: true }));
+  }
+
+  function clean(kind, value) {
+    if (kind === 'phone') {
+      return value.replace(/[^0-9+]/g, '').replace(/(?!^)\\+/g, '');
+    }
+    return value.replace(/[0-9]/g, '');
+  }
+
+  function guard(el, kind) {
+    const handler = function (e) {
+      if (e && e.isComposing) return;
+      const cleaned = clean(kind, el.value);
+      if (cleaned !== el.value) {
+        const removed = el.value.length - cleaned.length;
+        const pos = Math.max(0, (el.selectionStart || 0) - removed);
+        setValue(el, cleaned);
+        try { el.setSelectionRange(pos, pos); } catch (err) {}
+      }
+    };
+    el.addEventListener('input', handler);
+    el.addEventListener('compositionend', handler);
+  }
+
+  function scan() {
+    pdoc.querySelectorAll('input').forEach(function (el) {
+      if (el.dataset.guardToken === token) return;
+      const label = el.getAttribute('aria-label') || '';
+      let kind = null;
+      if (CFG.names.indexOf(label) !== -1) kind = 'name';
+      else if (CFG.phones.indexOf(label) !== -1) kind = 'phone';
+      if (!kind) return;
+      el.dataset.guardToken = token;
+      if (kind === 'phone') el.setAttribute('inputmode', 'tel');
+      guard(el, kind);
+    });
+  }
+
+  scan();
+  new MutationObserver(scan).observe(pdoc.body, { childList: true, subtree: true });
+})();
+</script>
+"""
+
+def enable_input_guard():
+    # ስም ሳጥን ውስጥ ቁጥር፣ ስልክ ሳጥን ውስጥ ፊደል ሲጻፍ ወዲያውኑ ያጠፋል
+    cfg = json.dumps({"names": [LABEL_NAME, LABEL_EMP_NAME], "phones": [LABEL_PHONE, LABEL_EMP_PHONE]}, ensure_ascii=False)
+    html = GUARD_JS.replace("__CFG__", cfg).strip()
+    try:
+        if hasattr(st, "iframe"):          # አዲስ የ Streamlit ስሪቶች
+            st.iframe(html, height=1)
+        else:                              # የድሮ ስሪቶች
+            import streamlit.components.v1 as components
+            components.html(html, height=0)
+    except Exception:
+        pass  # ስክሪፕቱ ባይሰራም ከታች ያለው የማረጋገጫ ፍተሻ ይሰራል
+
 st.title("ፈጣን ድለላ")
+enable_input_guard()
 
 ###### menu
 page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
 
 if page == "የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
-    with st.form("registration_form", clear_on_submit=True):
-        name = st.text_input("ሙሉ ስም")
-        phone = st.text_input("ስልክ ቁጥር:")
-        job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
-        experience = st.text_input("የስራ ልምድ:")
-        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"])
+    reg_n = st.session_state.get("reg_n", 0)
+    if st.session_state.pop("reg_ok", False):
+        st.success("ማመልከቻዎ ደርሶናል! በቅርቡ እናሳውቅወታለን")
+    with st.form("registration_form"):
+        name = st.text_input(LABEL_NAME, key=f"reg_name_{reg_n}")
+        phone = st.text_input(LABEL_PHONE, max_chars=13, key=f"reg_phone_{reg_n}")
+        job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"], key=f"reg_job_{reg_n}")
+        experience = st.text_input("የስራ ልምድ:", key=f"reg_exp_{reg_n}")
+        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"], key=f"reg_photo_{reg_n}")
         submit_button = st.form_submit_button("ይጫኑ")
-        if submit_button and name and phone and uploaded_file:
-            photo_bytes = uploaded_file.read()
-            conn = sqlite3.connect('database.db', check_same_thread=False)
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name, phone, job_type, experience, photo_bytes))
-            conn.commit()
-            conn.close()
-            st.success("ማመልከቻዎ ደርሶናል! በቅርቡ እናሳውቅወታለን")
+        if submit_button:
+            phone_clean = phone.replace(" ", "")
+            if not (name.strip() and phone_clean and uploaded_file):
+                st.error("እባክዎ ሙሉ ስም፣ ስልክ ቁጥር እና ፎቶ ያስገቡ።")
+            elif name_has_digit(name):
+                st.error("በስም ውስጥ ቁጥር መጻፍ አይቻልም።")
+            elif not phone_is_valid(phone_clean):
+                st.error("ስልክ ቁጥር ቁጥሮችን ብቻ መያዝ አለበት (ለምሳሌ 0912345678)።")
+            else:
+                photo_bytes = uploaded_file.read()
+                conn = sqlite3.connect('database.db', check_same_thread=False)
+                cursor = conn.cursor()
+                cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name.strip(), phone_clean, job_type, experience, photo_bytes))
+                conn.commit()
+                conn.close()
+                st.session_state["reg_n"] = reg_n + 1
+                st.session_state["reg_ok"] = True
+                st.rerun()
 
 elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
@@ -155,17 +253,31 @@ elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
                 show_form = st.checkbox(f"ይህንን ሰራተኛ መቅጠር እፈልጋለሁ", key=f"check_{row['id']}")
                 if show_form:
-                    with st.form(f"order_form_{row['id']}", clear_on_submit=True):
-                        emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
-                        emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
+                    rid = int(row['id'])
+                    ord_n = st.session_state.get(f"ord_n_{rid}", 0)
+                    if st.session_state.pop(f"ord_ok_{rid}", False):
+                        st.success("ጥያቄዎ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
+                    with st.form(f"order_form_{rid}"):
+                        emp_name = st.text_input(LABEL_EMP_NAME, key=f"emp_name_{rid}_{ord_n}")
+                        emp_phone = st.text_input(LABEL_EMP_PHONE, max_chars=13, key=f"emp_phone_{rid}_{ord_n}")
                         submit_order = st.form_submit_button("ላክ")
-                        if submit_order and emp_name and emp_phone:
-                            conn = sqlite3.connect('database.db', check_same_thread=False)
-                            cursor = conn.cursor()
-                            cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
-                            conn.commit()
-                            conn.close()
-                            st.success("ጥያቄዎ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
+                        if submit_order:
+                            emp_phone_clean = emp_phone.replace(" ", "")
+                            if not (emp_name.strip() and emp_phone_clean):
+                                st.error("እባክዎ ስምዎን እና ስልክዎን ያስገቡ።")
+                            elif name_has_digit(emp_name):
+                                st.error("በስም ውስጥ ቁጥር መጻፍ አይቻልም።")
+                            elif not phone_is_valid(emp_phone_clean):
+                                st.error("ስልክ ቁጥር ቁጥሮችን ብቻ መያዝ አለበት (ለምሳሌ 0912345678)።")
+                            else:
+                                conn = sqlite3.connect('database.db', check_same_thread=False)
+                                cursor = conn.cursor()
+                                cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name.strip(), emp_phone_clean, rid, row['name']))
+                                conn.commit()
+                                conn.close()
+                                st.session_state[f"ord_n_{rid}"] = ord_n + 1
+                                st.session_state[f"ord_ok_{rid}"] = True
+                                st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "Admin Only":
