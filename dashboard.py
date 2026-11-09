@@ -111,7 +111,7 @@ def delete_order(order_id):
 st.title("💼 ፈጣን ድለላ")
 
 # menu
-page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
+page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", " Admin Only"], horizontal=True)
  
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
