@@ -110,9 +110,9 @@ def delete_order(order_id):
 
 st.title("💼 ፈጣን ድለላ")
 
-# menu
-page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "🏨 Admin Only"], horizontal=True)
- 
+# 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
+page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
+
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     with st.form("registration_form", clear_on_submit=True):
@@ -130,7 +130,7 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
             conn.commit()
             conn.close()
             st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል!")
- 
+
 elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
@@ -164,6 +164,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                             conn.close()
                             st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል!")
             st.markdown('</div>', unsafe_allow_html=True)
+
 elif page == "📊 Admin Only":
     st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
