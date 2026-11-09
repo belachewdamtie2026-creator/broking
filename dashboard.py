@@ -110,10 +110,10 @@ def delete_order(order_id):
 
 st.title("💼 ፈጣን ድለላ")
 
-#  menu
-page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
+# 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
+page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
 
-if page == "የሰራተኛ መመዝገቢያ":
+if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     with st.form("registration_form", clear_on_submit=True):
         name = st.text_input("ሙሉ ስም")
@@ -121,7 +121,7 @@ if page == "የሰራተኛ መመዝገቢያ":
         job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
-        submit_button = st.form_submit_button("ይጫኑ")
+        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
         if submit_button and name and phone and uploaded_file:
             photo_bytes = uploaded_file.read()
             conn = sqlite3.connect('database.db', check_same_thread=False)
@@ -131,7 +131,7 @@ if page == "የሰራተኛ መመዝገቢያ":
             conn.close()
             st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል!")
 
-elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
+elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
     if not df.empty:
