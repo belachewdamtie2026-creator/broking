@@ -113,15 +113,15 @@ st.title("ፈጣን ድለላ")
 ###### menu
 page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
 
-if page == "📝 የሰራተኛ መመዝገቢያ":
+if page == "የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     with st.form("registration_form", clear_on_submit=True):
         name = st.text_input("ሙሉ ስም")
         phone = st.text_input("ስልክ ቁጥር:")
-        job_type = st.selectbox("የስራ አይነት:", ["የቡና አፍዪ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
+        job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
         uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"])
-        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ")
+        submit_button = st.form_submit_button("ይጫኑ")
         if submit_button and name and phone and uploaded_file:
             photo_bytes = uploaded_file.read()
             conn = sqlite3.connect('database.db', check_same_thread=False)
