@@ -111,7 +111,7 @@ def delete_order(order_id):
 st.title("💼 ፈጣን ድለላ")
 
 # 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
-page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
+page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
 
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
@@ -168,7 +168,7 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
 elif page == "📊 Admin Only":
     st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
-    if password == "bdr123":
+    if password == "123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
         with tab1:
             df_admin = load_data()
