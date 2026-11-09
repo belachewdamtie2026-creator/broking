@@ -111,7 +111,7 @@ def delete_order(order_id):
 st.title("💼 ፈጣን ድለላ")
 
 # 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
-page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
+page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
 
 if page == "📝 የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
@@ -120,8 +120,8 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
         phone = st.text_input("ስልክ ቁጥር:")
         job_type = st.selectbox("የስራ አይነት:", ["የቡና ባለሙያ", "ወጥ ቤት", "ፅዳት", "ሌላ"])
         experience = st.text_input("የስራ ልምድ:")
-        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (የግዴታ):", type=["jpg", "jpeg", "png"])
-        submit_button = st.form_submit_button("ለመመዝገብ እዚህ ይጫኑ 🚀")
+        uploaded_file = st.file_uploader("ፎቶዎን ይጫኑ (ግዴታ):", type=["jpg", "jpeg", "png"])
+        submit_button = st.form_submit_button("ይጫኑ")
         if submit_button and name and phone and uploaded_file:
             photo_bytes = uploaded_file.read()
             conn = sqlite3.connect('database.db', check_same_thread=False)
@@ -129,9 +129,9 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
             cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name, phone, job_type, experience, photo_bytes))
             conn.commit()
             conn.close()
-            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
+            st.success("ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
 
-elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
+elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
     if not df.empty:
@@ -155,18 +155,17 @@ elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                     with st.form(f"order_form_{row['id']}", clear_on_submit=True):
                         emp_name = st.text_input("የእርስዎ ስም:", key=f"emp_name_{row['id']}")
                         emp_phone = st.text_input("የእርስዎ ስልክ:", key=f"emp_phone_{row['id']}")
-                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን ላክ 📩")
+                        submit_order = st.form_submit_button("የቅጥር ጥያቄውን ላክ")
                         if submit_order and emp_name and emp_phone:
                             conn = sqlite3.connect('database.db', check_same_thread=False)
                             cursor = conn.cursor()
                             cursor.execute('INSERT INTO orders (employer_name, employer_phone, applicant_id, applicant_name) VALUES (?, ?, ?, ?)', (emp_name, emp_phone, row['id'], row['name']))
                             conn.commit()
                             conn.close()
-                            st.success("🎉 የቅጥር ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
+                            st.success("ጥያቄዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
             st.markdown('</div>', unsafe_allow_html=True)
 
 elif page == "📊 Admin Only":
-    st.subheader("🔒 የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
     if password == "bdr123":
         tab1, tab2 = st.tabs(["👥 የተመዘገቡ ሰራተኞች", "📥 የመጡ የቅጥር ጥያቄዎች"])
