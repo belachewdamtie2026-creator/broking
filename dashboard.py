@@ -5,9 +5,9 @@ from PIL import Image
 import io
 import re
 import json
-
+ 
 st.set_page_config(page_title="የባህር ዳር ኦንላይን ድለላ", layout="wide")
-
+ 
 ##### CSS
 st.markdown("""
     <style>
@@ -53,7 +53,7 @@ st.markdown("""
         }
         div.stButton > button[key^="del_"], div.stButton > button[key^="delorder_"] { background-color: #dc2626 !important; color: white !important; font-size: 16px !important; }
         div.stButton > button:not([key^="del_"]):not([key^="delorder_"]):not([key^="submit_"]):not([data-testid="baseButton-secondaryFormSubmit"]) { background-color: #2563eb !important; color: white !important; }
-
+ 
         /* 🔠 ትልቅ የጽሁፍ መጠኖች */
         h1, h1 * { font-size: 42px !important; font-weight: 800 !important; color: #1e3a8a !important; }
         h2, h2 *, h3, h3 * { font-size: 30px !important; font-weight: 700 !important; color: #1e293b !important; }
@@ -64,12 +64,12 @@ st.markdown("""
         div.stButton > button p, div.stFormSubmitButton > button p { font-size: 22px !important; font-weight: 800 !important; }
         [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p { font-size: 20px !important; }
         [data-testid="stAlert"] p { font-size: 22px !important; }
-
+ 
         /* "Press Enter to submit form" የሚለውን ጽሁፍ ደብቅ */
         [data-testid="InputInstructions"], div[data-testid="InputInstructions"] { display: none !important; }
     </style>
 """, unsafe_allow_html=True)
-
+ 
 def init_db():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
@@ -77,63 +77,63 @@ def init_db():
     cursor.execute('CREATE TABLE IF NOT EXISTS orders (id INTEGER PRIMARY KEY AUTOINCREMENT, employer_name TEXT NOT NULL, employer_phone TEXT NOT NULL, applicant_id INTEGER, applicant_name TEXT, status TEXT DEFAULT "አዲስ ጥያቄ")')
     conn.commit()
     conn.close()
-
+ 
 init_db()
-
+ 
 def load_data():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     df = pd.read_sql_query("SELECT * FROM applicants", conn)
     conn.close()
     return df
-
+ 
 def load_orders():
     conn = sqlite3.connect('database.db', check_same_thread=False)
     df = pd.read_sql_query("SELECT * FROM orders", conn)
     conn.close()
     return df
-
+ 
 def update_order_status(order_id, new_status):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute('UPDATE orders SET status = ? WHERE id = ?', (new_status, order_id))
     conn.commit()
     conn.close()
-
+ 
 def delete_applicant(applicant_id):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM applicants WHERE id = ?', (applicant_id,))
     conn.commit()
     conn.close()
-
+ 
 def delete_order(order_id):
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     cursor.execute('DELETE FROM orders WHERE id = ?', (order_id,))
     conn.commit()
     conn.close()
-
+ 
 # ✍️ የመሙያ ሳጥኖች ስሞች (እዚህ ብቻ ይቀየራሉ፣ የመከልከያው ስክሪፕት ራሱ ይከተላቸዋል)
 LABEL_NAME = "ሙሉ ስም"
 LABEL_PHONE = "ስልክ ቁጥር:"
 LABEL_EMP_NAME = "የእርስዎ ስም:"
 LABEL_EMP_PHONE = "የእርስዎ ስልክ:"
 LABEL_EXPERIENCE = "የስራ ልምድ (በአመት):"
-
+ 
 def name_has_digit(text):
     return any(ch in "0123456789" for ch in text)
-
+ 
 def format_experience(value):
     # ቁጥር ብቻ ከሆነ "አመት" ይጨምራል፤ ቀድሞ በጽሁፍ የተመዘገበ ልምድ እንዳለ ይታያል
     text = "" if value is None or (isinstance(value, float) and pd.isna(value)) else str(value).strip()
     if not text:
         return "—"
     return f"{text} አመት" if text.isdigit() else text
-
+ 
 def phone_is_valid(text):
     # ቁጥሮች ብቻ (መጀመሪያ ላይ + ይፈቀዳል)፣ ከ 9 እስከ 13 አሃዝ
     return re.fullmatch(r"\+?[0-9]{9,13}", text) is not None
-
+ 
 GUARD_JS = """
 <script>
 (function () {
@@ -141,13 +141,13 @@ GUARD_JS = """
   const PWin = window.parent;
   const pdoc = PWin.document;
   const token = String(Math.random());
-
+ 
   function setValue(el, value) {
     const setter = Object.getOwnPropertyDescriptor(PWin.HTMLInputElement.prototype, 'value').set;
     setter.call(el, value);
     el.dispatchEvent(new PWin.Event('input', { bubbles: true }));
   }
-
+ 
   function clean(kind, value) {
     if (kind === 'phone') {
       return value.replace(/[^0-9+]/g, '').replace(/(?!^)\\+/g, '');
@@ -157,7 +157,7 @@ GUARD_JS = """
     }
     return value.replace(/[0-9]/g, '');
   }
-
+ 
   function guard(el, kind) {
     const handler = function (e) {
       if (e && e.isComposing) return;
@@ -172,7 +172,7 @@ GUARD_JS = """
     el.addEventListener('input', handler);
     el.addEventListener('compositionend', handler);
   }
-
+ 
   function scan() {
     pdoc.querySelectorAll('input').forEach(function (el) {
       if (el.dataset.guardToken === token) return;
@@ -188,13 +188,13 @@ GUARD_JS = """
       guard(el, kind);
     });
   }
-
+ 
   scan();
   new MutationObserver(scan).observe(pdoc.body, { childList: true, subtree: true });
 })();
 </script>
 """
-
+ 
 def enable_input_guard():
     # ስም ሳጥን ውስጥ ቁጥር፣ ስልክ ሳጥን ውስጥ ፊደል ሲጻፍ ወዲያውኑ ያጠፋል
     cfg = json.dumps({"names": [LABEL_NAME, LABEL_EMP_NAME], "phones": [LABEL_PHONE, LABEL_EMP_PHONE], "numbers": [LABEL_EXPERIENCE]}, ensure_ascii=False)
@@ -207,13 +207,13 @@ def enable_input_guard():
             components.html(html, height=0)
     except Exception:
         pass  # ስክሪፕቱ ባይሰራም ከታች ያለው የማረጋገጫ ፍተሻ ይሰራል
-
+ 
 st.title("ፈጣን ድለላ")
 enable_input_guard()
-
+ 
 ###### menu
 page = st.radio("Menu", ["የሰራተኛ መመዝገቢያ", "ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "Admin Only"], horizontal=True)
-
+ 
 if page == "የሰራተኛ መመዝገቢያ":
     st.subheader("ከቤትዎ ሆነው በቀላሉ ይመዝግቡ")
     reg_n = st.session_state.get("reg_n", 0)
@@ -246,7 +246,7 @@ if page == "የሰራተኛ መመዝገቢያ":
                 st.session_state["reg_n"] = reg_n + 1
                 st.session_state["reg_ok"] = True
                 st.rerun()
-
+ 
 elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
@@ -294,7 +294,7 @@ elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                                 st.session_state[f"ord_ok_{rid}"] = True
                                 st.rerun()
             st.markdown('</div>', unsafe_allow_html=True)
-
+ 
 elif page == "Admin Only":
     st.subheader("የአስተዳዳሪ መቆጣጠሪያ ሰሌዳ")
     password = st.text_input("Password ያስገቡ፦", type="password")
