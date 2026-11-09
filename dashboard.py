@@ -129,9 +129,9 @@ if page == "📝 የሰራተኛ መመዝገቢያ":
             cursor.execute('INSERT INTO applicants (name, phone, job_type, experience, photo) VALUES (?, ?, ?, ?, ?)', (name, phone, job_type, experience, photo_bytes))
             conn.commit()
             conn.close()
-            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል!")
+            st.success("🎉 ማመልከቻዎ በተሳካ ሁኔታ ደርሶናል! በቅርቡ እናሳውቅዎታለን")
 
-elif page == "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
+elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
     st.subheader("የሚፈልጉትን ሰራተኛ ይምረጡ")
     df = load_data()
     if not df.empty:
