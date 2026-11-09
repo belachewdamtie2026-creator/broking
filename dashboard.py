@@ -62,6 +62,9 @@ st.markdown("""
         div.stButton > button p, div.stFormSubmitButton > button p { font-size: 22px !important; font-weight: 800 !important; }
         [data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p { font-size: 20px !important; }
         [data-testid="stAlert"] p { font-size: 22px !important; }
+
+        /* "Press Enter to submit form" የሚለውን ጽሁፍ ደብቅ */
+        [data-testid="InputInstructions"], div[data-testid="InputInstructions"] { display: none !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -146,7 +149,7 @@ elif page == "ዝግጁ የሆኑ ሰራተኞች ዝርዝር":
                 else:
                     st.write("❌ ፎቶ የለም")
             with col2:
-                badge_color = "#ea580c" if row['job_type'] == "የቡና አፍዪ" else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
+                badge_color = "#ea580c" if row['job_type'] in ("የቡና ባለሙያ", "የቡና አፍዪ") else ("#16a34a" if row['job_type'] == "ወጥ ቤት" else "#7c3aed")
                 st.subheader(f"ስም: {row['name']}")
                 st.markdown(f"<p style='font-size:16px;'>💼 <b>የስራ ዘርፍ:</b> <span style='background-color:{badge_color}; color:#ffffff; padding:4px 10px; border-radius:12px; font-weight:600;'>{row['job_type']}</span></p>", unsafe_allow_html=True)
                 st.write(f"📜 **የስራ ልምድ:** {row['experience']}")
