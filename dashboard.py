@@ -110,7 +110,7 @@ def delete_order(order_id):
 
 st.title("💼 ፈጣን ድለላ")
 
-# 📱 ምናሌው ስልክ ላይ እንዳይደበቅ ከ sidebar ወደ ዋናው ገጽ ተዛውሯል
+# menu
 page = st.radio("ምናሌ (Menu)", ["📝 የሰራተኛ መመዝገቢያ", "🏨 ዝግጁ የሆኑ ሰራተኞች ዝርዝር", "📊 Admin Only"], horizontal=True)
 
 if page == "📝 የሰራተኛ መመዝገቢያ":
